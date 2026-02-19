@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --ring: 46 125 90;
+}
+
+body {
+  @apply min-h-screen bg-bg text-ink antialiased;
+  font-family: "Manrope", "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(47, 133, 90, 0.12), transparent 36%),
+    radial-gradient(circle at 85% 8%, rgba(27, 42, 31, 0.08), transparent 30%),
+    linear-gradient(180deg, #f8fbf7 0%, #f4f8f4 100%);
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+input,
+textarea,
+select {
+  @apply w-full rounded-xl border border-emerald-200/80 bg-white/95 p-2.5 text-base shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200 sm:text-sm;
+}
+
+button {
+  @apply rounded-xl px-3 py-2 text-sm font-medium transition active:scale-[0.99];
+}
+
+label {
+  @apply mb-1 block text-sm font-medium text-zinc-700;
+}
+
+a {
+  @apply transition;
+}
+
+textarea {
+  @apply min-h-[44px];
+}
+
+pre {
+  overflow-x: auto;
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-5xl space-y-4 sm:space-y-5;
+  }
+
+  .surface {
+    @apply rounded-2xl border border-emerald-100/80 bg-white/95 shadow-[0_8px_24px_rgba(16,24,40,0.06)];
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1 rounded-xl px-3 py-2 text-sm font-semibold transition active:scale-[0.99];
+  }
+
+  .btn-primary {
+    @apply bg-emerald-700 text-white hover:bg-emerald-800;
+  }
+
+  .btn-secondary {
+    @apply border border-emerald-200 bg-white text-zinc-700 hover:bg-emerald-50;
+  }
+
+  .btn-danger {
+    @apply border border-red-300 bg-red-50 text-red-700 hover:bg-red-100;
+  }
+
+  .btn-muted {
+    @apply border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50;
+  }
+
+  .alert-error {
+    @apply rounded-xl border border-red-200 bg-red-50 p-2.5 text-sm text-red-700;
+  }
+
+  .alert-success {
+    @apply rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-sm text-emerald-700;
+  }
+
+  .alert-warn {
+    @apply rounded-xl border border-amber-200 bg-amber-50 p-2.5 text-sm text-amber-700;
+  }
+}

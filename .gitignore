@@ -1,0 +1,8 @@
+.next
+node_modules
+.env.local
+.env
+.DS_Store
+coverage
+tsconfig.tsbuildinfo
+formbae-9c6e75e13fc1.json

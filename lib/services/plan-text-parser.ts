@@ -84,7 +84,7 @@ function cleanNoteLine(line: string): string {
 }
 
 function parseExerciseLine(raw: string): ParsedWorkoutText["days"][number]["exercises"][number] | null {
-  let line = raw
+  const line = raw
     .replace(/^[-*]\s*/, "")
     .replace(/^\d+(?:\.\d+)?\s*[.)-]?\s*/, "")
     .trim();

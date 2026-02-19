@@ -380,42 +380,66 @@ export function PlanEditorForm(props: Props) {
                         <p>Rest (sec)</p>
                       </div>
                       {d.exercises.map((ex, exIdx) => (
-                        <div key={`${dayIdx}-${exIdx}`} className="grid grid-cols-1 gap-2 md:grid-cols-5">
-                          <input
-                            value={ex.exerciseName}
-                            onChange={(e) => setExerciseField(dayIdx, exIdx, "exerciseName", e.target.value)}
-                            placeholder="Exercise"
-                          />
+                        <div key={`${dayIdx}-${exIdx}`} className="grid grid-cols-1 gap-2 rounded-lg border border-emerald-100 p-2 md:grid-cols-5 md:rounded-none md:border-0 md:p-0">
+                          <div className="md:col-span-1">
+                            <label className="text-xs text-zinc-600 md:hidden">Exercise</label>
+                            <input
+                              value={ex.exerciseName}
+                              onChange={(e) => setExerciseField(dayIdx, exIdx, "exerciseName", e.target.value)}
+                              placeholder="Exercise"
+                            />
+                          </div>
                           {isDurationExercise(ex) ? (
                             <>
-                              <input value="-" disabled className="bg-zinc-50 text-zinc-500" />
-                              <input value="-" disabled className="bg-zinc-50 text-zinc-500" />
-                              <input
-                                value={getDurationMinutes(ex)}
-                                onChange={(e) => setExerciseDuration(dayIdx, exIdx, e.target.value)}
-                                placeholder="Duration mins"
-                              />
+                              <div>
+                                <label className="text-xs text-zinc-600 md:hidden">Sets</label>
+                                <input value="-" disabled className="bg-zinc-50 text-zinc-500" />
+                              </div>
+                              <div>
+                                <label className="text-xs text-zinc-600 md:hidden">Reps</label>
+                                <input value="-" disabled className="bg-zinc-50 text-zinc-500" />
+                              </div>
+                              <div>
+                                <label className="text-xs text-zinc-600 md:hidden">Duration (mins)</label>
+                                <input
+                                  value={getDurationMinutes(ex)}
+                                  onChange={(e) => setExerciseDuration(dayIdx, exIdx, e.target.value)}
+                                  placeholder="Duration mins"
+                                />
+                              </div>
                             </>
                           ) : (
                             <>
-                              <input
-                                value={ex.sets}
-                                onChange={(e) => setExerciseField(dayIdx, exIdx, "sets", e.target.value)}
-                                placeholder="Sets"
-                              />
-                              <input
-                                value={ex.reps}
-                                onChange={(e) => setExerciseField(dayIdx, exIdx, "reps", cleanReps(e.target.value))}
-                                placeholder="Reps"
-                              />
-                              <input value="-" disabled className="bg-zinc-50 text-zinc-500" />
+                              <div>
+                                <label className="text-xs text-zinc-600 md:hidden">Sets</label>
+                                <input
+                                  value={ex.sets}
+                                  onChange={(e) => setExerciseField(dayIdx, exIdx, "sets", e.target.value)}
+                                  placeholder="Sets"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-zinc-600 md:hidden">Reps</label>
+                                <input
+                                  value={ex.reps}
+                                  onChange={(e) => setExerciseField(dayIdx, exIdx, "reps", cleanReps(e.target.value))}
+                                  placeholder="Reps"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-zinc-600 md:hidden">Duration (mins)</label>
+                                <input value="-" disabled className="bg-zinc-50 text-zinc-500" />
+                              </div>
                             </>
                           )}
-                          <input
-                            value={ex.restSec}
-                            onChange={(e) => setExerciseField(dayIdx, exIdx, "restSec", e.target.value)}
-                            placeholder="Rest sec"
-                          />
+                          <div>
+                            <label className="text-xs text-zinc-600 md:hidden">Rest (sec)</label>
+                            <input
+                              value={ex.restSec}
+                              onChange={(e) => setExerciseField(dayIdx, exIdx, "restSec", e.target.value)}
+                              placeholder="Rest sec"
+                            />
+                          </div>
                         </div>
                       ))}
                       <div className="rounded border border-emerald-100 p-2">

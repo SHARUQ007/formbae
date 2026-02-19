@@ -8,6 +8,7 @@ import { isValidMobile, normalizeMobile } from "@/lib/utils/mobile";
 export async function POST(request: NextRequest) {
   const session = await getSessionUser();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const dashboardPath = session.role === "admin" ? "/admin/dashboard" : "/trainer/dashboard";
 
   const form = await request.formData();
   const mode = String(form.get("mode") ?? "create");
@@ -23,11 +24,11 @@ export async function POST(request: NextRequest) {
     const users = await repo.readUsers();
     const target = users.find((u) => u.userId === userId && u.role === "user");
     if (!target) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=user_not_found", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=user_not_found`, request.url));
     }
 
     if (session.role === "trainer" && target.trainerId && target.trainerId !== session.userId) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=user_assigned", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=user_assigned`, request.url));
     }
 
     await repo.upsertUser({
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
       trainerId: session.role === "trainer" ? session.userId : target.trainerId
     });
 
-    return NextResponse.redirect(new URL("/trainer/dashboard?assigned=1", request.url));
+    return NextResponse.redirect(new URL(`${dashboardPath}?assigned=1`, request.url));
   }
 
   if (mode === "removeExisting") {
@@ -49,11 +50,11 @@ export async function POST(request: NextRequest) {
     const users = await repo.readUsers();
     const target = users.find((u) => u.userId === userId && u.role === "user");
     if (!target) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=user_not_found", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=user_not_found`, request.url));
     }
 
     if (session.role === "trainer" && target.trainerId !== session.userId) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=not_owner", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=not_owner`, request.url));
     }
 
     await repo.upsertUser({
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
       trainerId: ""
     });
 
-    return NextResponse.redirect(new URL("/trainer/dashboard?removed=1", request.url));
+    return NextResponse.redirect(new URL(`${dashboardPath}?removed=1`, request.url));
   }
 
   if (mode === "setStatus") {
@@ -76,11 +77,11 @@ export async function POST(request: NextRequest) {
     const users = await repo.readUsers();
     const target = users.find((u) => u.userId === userId);
     if (!target || (target.role ?? "").trim().toLowerCase() !== "user") {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=user_not_found", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=user_not_found`, request.url));
     }
 
     if (session.role === "trainer" && (target.trainerId ?? "").trim() !== session.userId) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=not_owner", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=not_owner`, request.url));
     }
 
     await repo.upsertUser({
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
       allowlistFlag
     });
 
-    return NextResponse.redirect(new URL("/trainer/dashboard?statusUpdated=1", request.url));
+    return NextResponse.redirect(new URL(`${dashboardPath}?statusUpdated=1`, request.url));
   }
 
   if (mode === "profile") {
@@ -135,16 +136,16 @@ export async function POST(request: NextRequest) {
     const [requests, users, profiles] = await Promise.all([repo.readRequests(), repo.readUsers(), repo.readProfiles()]);
     const req = requests.find((r) => r.requestId === requestId);
     if (!req) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=request_not_found", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=request_not_found`, request.url));
     }
 
     if (req.status.toLowerCase() !== "pending") {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=request_processed", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=request_processed`, request.url));
     }
 
     const assignedTrainerId = req.trainerId?.trim() || (session.role === "trainer" ? session.userId : "");
     if (session.role === "trainer" && req.trainerId?.trim() && req.trainerId !== session.userId) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=request_not_owned", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=request_not_owned`, request.url));
     }
 
     const reqMobile = normalizeMobile(req.mobile);
@@ -198,7 +199,7 @@ export async function POST(request: NextRequest) {
       trainerId: assignedTrainerId
     });
 
-    return NextResponse.redirect(new URL("/trainer/dashboard?approved=1", request.url));
+    return NextResponse.redirect(new URL(`${dashboardPath}?approved=1`, request.url));
   }
 
   if (mode === "importApprovedRequest") {
@@ -212,16 +213,16 @@ export async function POST(request: NextRequest) {
     const [requests, users, profiles] = await Promise.all([repo.readRequests(), repo.readUsers(), repo.readProfiles()]);
     const req = requests.find((r) => r.requestId === requestId);
     if (!req) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=request_not_found", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=request_not_found`, request.url));
     }
 
     if ((req.status ?? "").toLowerCase() !== "approved") {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=request_not_approved", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=request_not_approved`, request.url));
     }
 
     const reqTrainerId = (req.trainerId ?? "").trim();
     if (session.role === "trainer" && reqTrainerId && reqTrainerId !== session.userId) {
-      return NextResponse.redirect(new URL("/trainer/dashboard?error=request_not_owned", request.url));
+      return NextResponse.redirect(new URL(`${dashboardPath}?error=request_not_owned`, request.url));
     }
 
     const assignedTrainerId = session.role === "trainer" ? session.userId : reqTrainerId;
@@ -282,7 +283,7 @@ export async function POST(request: NextRequest) {
       trainerId: assignedTrainerId || req.trainerId || ""
     });
 
-    return NextResponse.redirect(new URL("/trainer/dashboard?imported=1", request.url));
+    return NextResponse.redirect(new URL(`${dashboardPath}?imported=1`, request.url));
   }
 
   if (session.role !== "trainer" && session.role !== "admin") {

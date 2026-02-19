@@ -9,7 +9,17 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage({
   searchParams
 }: {
-  searchParams: Promise<{ error?: string; updated?: string; created?: string; deleted?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    updated?: string;
+    created?: string;
+    deleted?: string;
+    approved?: string;
+    assigned?: string;
+    removed?: string;
+    statusUpdated?: string;
+    imported?: string;
+  }>;
 }) {
   await requireUser("admin");
   const params = await searchParams;
@@ -34,11 +44,15 @@ export default async function AdminDashboardPage({
           {params.error === "mobile_exists" && "Mobile already exists."}
           {params.error === "cannot_disable_self" && "You cannot disable your own admin account."}
           {params.error === "cannot_delete_self" && "You cannot delete your own admin account."}
+          {params.error === "request_not_found" && "Access request not found."}
+          {params.error === "request_processed" && "This access request is already processed."}
+          {params.error === "request_not_approved" && "Only approved requests can be imported."}
         </p>
       )}
       {params.created && <p className="alert-success">Account created.</p>}
       {params.updated && <p className="alert-success">User updated.</p>}
       {params.deleted && <p className="alert-success">Account permanently deleted.</p>}
+      {params.approved && <p className="alert-success">Access request approved and user enabled.</p>}
 
       <section className="surface p-4">
         <h2 className="mb-3 text-base font-semibold">Add Trainer</h2>
@@ -122,10 +136,31 @@ export default async function AdminDashboardPage({
         <h2 className="mb-3 text-base font-semibold">Access Requests</h2>
         <ul className="space-y-2 text-sm">
           {requests.map((r) => (
-            <li key={r.requestId} className="rounded border border-emerald-100 p-2">
-              {r.name} • {r.mobile} • {r.status}
+            <li key={r.requestId} className="flex flex-col gap-2 rounded border border-emerald-100 p-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <p className="font-medium">{r.name || "Unnamed"}</p>
+                <p className="break-all text-zinc-600">{r.mobile}</p>
+                <p className="text-xs text-zinc-500">
+                  Requested Trainer: {trainers.find((t) => t.userId === (r.trainerId ?? ""))?.name || "No preference"}
+                </p>
+                {!!r.notes && <p className="text-xs text-zinc-500">Notes: {r.notes}</p>}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {(r.status ?? "").toLowerCase() === "pending" ? (
+                  <form action="/api/trainer/users" method="post">
+                    <input type="hidden" name="mode" value="approveRequest" />
+                    <input type="hidden" name="requestId" value={r.requestId} />
+                    <button className="btn btn-primary text-xs" type="submit">Enable User</button>
+                  </form>
+                ) : (
+                  <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                    {r.status}
+                  </span>
+                )}
+              </div>
             </li>
           ))}
+          {!requests.length && <li className="text-zinc-500">No access requests yet.</li>}
         </ul>
       </section>
     </div>

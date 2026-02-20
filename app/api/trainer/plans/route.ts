@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { repo } from "@/lib/repo/sheets-repo";
 import { readSheet, overwriteRows, uid } from "@/lib/sheets/base";
@@ -150,13 +150,24 @@ export async function POST(request: NextRequest) {
   }
 
   await replacePlanRows(planId, resolvedDays);
+
   const backgroundExercises = resolvedDays.flatMap((day) =>
     (day.exercises ?? []).map((ex) => ({
       exerciseId: asString(ex.exerciseId),
       exerciseName: asString(ex.exerciseName)
     }))
   );
-  void backfillExerciseVideosInBackground(backgroundExercises);
+  after(async () => {
+    try {
+      await backfillExerciseVideosInBackground(backgroundExercises, {
+        youtubeDelayMs: 450,
+        sheetsBatchSize: 10,
+        sheetsDelayMs: 500
+      });
+    } catch {
+      // Best-effort async enrichment.
+    }
+  });
 
   const redirectUrl = new URL(`/trainer/plans/${planId}/edit`, request.url);
   if (confirmPlan === "true") {
@@ -192,6 +203,7 @@ async function resolveExerciseReferences(days: PlanDayInput[]): Promise<PlanDayI
 
   const exercises = [...allExercises];
   const videos = [...allVideos];
+  const existingExerciseIds = new Set(exercises.map((e) => e.exerciseId));
   const pendingNewExercises: Array<{
     exerciseId: string;
     name: string;
@@ -199,31 +211,40 @@ async function resolveExerciseReferences(days: PlanDayInput[]): Promise<PlanDayI
     equipment: string;
     defaultCuesJson: string;
   }> = [];
+  const pendingExerciseIds = new Set<string>();
   const pendingByName = new Map<string, string>();
+
+  function queueExercise(exerciseId: string, name: string) {
+    const id = exerciseId.trim();
+    if (!id || existingExerciseIds.has(id) || pendingExerciseIds.has(id)) return;
+    const resolvedName = name.trim() || "Unspecified Exercise";
+    const row = {
+      exerciseId: id,
+      name: resolvedName,
+      primaryMuscle: "General",
+      equipment: "Mixed",
+      defaultCuesJson: "{}"
+    };
+    pendingNewExercises.push(row);
+    exercises.push(row);
+    existingExerciseIds.add(id);
+    pendingExerciseIds.add(id);
+  }
 
   async function ensureExercise(exerciseName?: string, exerciseId?: string): Promise<{ exerciseId: string; videoId?: string; videoUrl?: string }> {
     if (exerciseId) {
-      const matchedVideo = videos.find((v) => v.exerciseId === exerciseId);
-      return { exerciseId, videoId: matchedVideo?.videoId, videoUrl: matchedVideo?.url };
+      const id = exerciseId.trim();
+      if (id && !existingExerciseIds.has(id)) {
+        queueExercise(id, (exerciseName ?? "").trim() || "Unspecified Exercise");
+      }
+      const matchedVideo = videos.find((v) => v.exerciseId === id);
+      return { exerciseId: id, videoId: matchedVideo?.videoId, videoUrl: matchedVideo?.url };
     }
 
     const name = (exerciseName ?? "").trim();
     if (!name) {
       const fallbackId = uid("ex");
-      pendingNewExercises.push({
-        exerciseId: fallbackId,
-        name: "Unspecified Exercise",
-        primaryMuscle: "General",
-        equipment: "Mixed",
-        defaultCuesJson: "{}"
-      });
-      exercises.push({
-        exerciseId: fallbackId,
-        name: "Unspecified Exercise",
-        primaryMuscle: "General",
-        equipment: "Mixed",
-        defaultCuesJson: "{}"
-      });
+      queueExercise(fallbackId, "Unspecified Exercise");
       return { exerciseId: fallbackId };
     }
 
@@ -241,21 +262,7 @@ async function resolveExerciseReferences(days: PlanDayInput[]): Promise<PlanDayI
 
     const newExerciseId = uid("ex");
     pendingByName.set(key, newExerciseId);
-    pendingNewExercises.push({
-      exerciseId: newExerciseId,
-      name,
-      primaryMuscle: "General",
-      equipment: "Mixed",
-      defaultCuesJson: "{}"
-    });
-
-    exercises.push({
-      exerciseId: newExerciseId,
-      name,
-      primaryMuscle: "General",
-      equipment: "Mixed",
-      defaultCuesJson: "{}"
-    });
+    queueExercise(newExerciseId, name);
 
     return { exerciseId: newExerciseId };
   }

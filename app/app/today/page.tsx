@@ -1,6 +1,7 @@
 import { Card } from "@/components/Card";
 import { DayCompleteToggle } from "@/components/DayCompleteToggle";
 import { ExerciseCompleteToggle } from "@/components/ExerciseCompleteToggle";
+import { ExerciseVideoPlayer } from "@/components/ExerciseVideoPlayer";
 import { SectionTitle } from "@/components/SectionTitle";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth/guard";
@@ -19,24 +20,6 @@ function isDurationExercise(exerciseName: string, reps: string): boolean {
 function cleanReps(reps: string): string {
   const value = (reps || "").trim();
   return value.toLowerCase() === "as prescribed" ? "" : value;
-}
-
-function getYouTubeVideoId(url: string): string | null {
-  if (!url) return null;
-
-  const patterns = [
-    /youtube\.com\/shorts\/([^?&/]+)/i,
-    /youtube\.com\/watch\?v=([^?&/]+)/i,
-    /youtube\.com\/embed\/([^?&/]+)/i,
-    /youtu\.be\/([^?&/]+)/i
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match?.[1]) return match[1];
-  }
-
-  return null;
 }
 
 function parseDateOnly(value: string): Date | null {
@@ -156,28 +139,12 @@ export default async function TodayPage({
                 </p>
                   );
                 })()}
-                {e.videoUrl && (() => {
-                  const videoId = getYouTubeVideoId(e.videoUrl);
-                  if (!videoId) {
-                    return (
-                      <a href={e.videoUrl} target="_blank" className="inline-block text-sm text-emerald-700 underline" rel="noreferrer">
-                        Watch short
-                      </a>
-                    );
-                  }
-
-                  return (
-                    <div className="mt-2 overflow-hidden rounded-lg border border-emerald-100">
-                      <iframe
-                        src={`https://www.youtube.com/embed/${videoId}`}
-                        title={`${e.exerciseName} short`}
-                        className="h-52 w-full sm:h-64 md:h-80"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  );
-                })()}
+                <ExerciseVideoPlayer
+                  planDayId={todayDay.planDayId}
+                  exerciseId={e.exerciseId}
+                  exerciseName={e.exerciseName}
+                  initialVideoUrl={e.videoUrl}
+                />
                 <form action="/api/video/report" method="post" className="mt-2 flex flex-wrap gap-2">
                   <input type="hidden" name="exerciseId" value={e.exerciseId} />
                   <input type="hidden" name="videoUrl" value={e.videoUrl} />

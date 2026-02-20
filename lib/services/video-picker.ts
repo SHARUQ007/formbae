@@ -22,8 +22,26 @@ export async function findBestVideoForExercise(exerciseId: string, exerciseName:
   return best;
 }
 
+export async function findAlternativeVideoForExercise(
+  exerciseId: string,
+  exerciseName: string,
+  excludedUrls: string[]
+): Promise<VideoRow | null> {
+  const excludedKeys = new Set(excludedUrls.map((url) => toComparableVideoKey(url)).filter(Boolean));
+  const candidates = await buildVideoCandidates(exerciseId, exerciseName);
+  const next = candidates.find((candidate) => !excludedKeys.has(toComparableVideoKey(candidate.url)));
+  if (!next) return null;
+  await repo.append("videos", next);
+  return next;
+}
+
 export async function buildBestVideoCandidate(exerciseId: string, exerciseName: string): Promise<VideoRow | null> {
-  if (!API_KEY) return null;
+  const candidates = await buildVideoCandidates(exerciseId, exerciseName);
+  return candidates[0] ?? null;
+}
+
+async function buildVideoCandidates(exerciseId: string, exerciseName: string): Promise<VideoRow[]> {
+  if (!API_KEY) return [];
 
   const youtube = google.youtube({ version: "v3", auth: API_KEY });
   const query = `${exerciseName} proper form shorts`;
@@ -36,14 +54,14 @@ export async function buildBestVideoCandidate(exerciseId: string, exerciseName: 
   });
 
   const ids = (searchRes.data.items ?? []).map((i) => i.id?.videoId).filter(Boolean) as string[];
-  if (!ids.length) return null;
+  if (!ids.length) return [];
 
   const details = await youtube.videos.list({
     part: ["snippet", "statistics", "contentDetails"],
     id: ids
   });
 
-  let best: VideoRow | null = null;
+  const candidates: VideoRow[] = [];
   for (const item of details.data.items ?? []) {
     const id = item.id;
     if (!id) continue;
@@ -65,12 +83,10 @@ export async function buildBestVideoCandidate(exerciseId: string, exerciseName: 
       searchQuery: query
     };
 
-    if (!best || Number(row.score) > Number(best.score)) {
-      best = row;
-    }
+    candidates.push(row);
   }
 
-  return best;
+  return candidates.sort((a, b) => Number(b.score) - Number(a.score));
 }
 
 function parseIsoDuration(input: string): number {
@@ -79,4 +95,25 @@ function parseIsoDuration(input: string): number {
   const mins = Number(match[1] ?? "0");
   const secs = Number(match[2] ?? "0");
   return mins * 60 + secs;
+}
+
+function extractYouTubeId(url: string): string {
+  if (!url) return "";
+  const patterns = [
+    /youtube\.com\/shorts\/([^?&/]+)/i,
+    /youtube\.com\/watch\?v=([^?&/]+)/i,
+    /youtube\.com\/embed\/([^?&/]+)/i,
+    /youtu\.be\/([^?&/]+)/i
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match?.[1]) return match[1];
+  }
+  return "";
+}
+
+function toComparableVideoKey(url: string): string {
+  const id = extractYouTubeId(url);
+  if (id) return `yt:${id}`;
+  return url.trim().toLowerCase();
 }

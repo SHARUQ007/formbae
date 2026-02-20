@@ -1,15 +1,16 @@
+import { ExerciseLibraryList } from "@/components/ExerciseLibraryList";
 import { SectionTitle } from "@/components/SectionTitle";
 import { requireUser } from "@/lib/auth/guard";
 import { repo } from "@/lib/repo/sheets-repo";
 
 export default async function ExercisesPage() {
   await requireUser("trainer");
-  const exercises = await repo.readExercises();
+  const [exercises, videos] = await Promise.all([repo.readExercises(), repo.readVideos()]);
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-4">
+    <div className="mx-auto w-full max-w-4xl space-y-4 px-3 pb-4 sm:px-0">
       <SectionTitle title="Exercise Library" subtitle="Manage default cues and fallback video links." />
-      <form action="/api/trainer/exercises" method="post" className="surface space-y-3 p-4">
+      <form action="/api/trainer/exercises" method="post" className="surface space-y-3 p-3 sm:p-4">
         <label>Exercise Name</label>
         <input name="name" required />
         <div className="grid gap-3 md:grid-cols-2">
@@ -46,18 +47,7 @@ export default async function ExercisesPage() {
         <input name="manualVideoUrl" placeholder="https://youtube.com/shorts/..." />
         <button className="btn btn-primary w-full" type="submit">Add Exercise</button>
       </form>
-
-      <div className="surface p-4">
-        <h3 className="mb-3 text-sm font-semibold">Existing Exercises</h3>
-        <ul className="space-y-2">
-          {exercises.map((e) => (
-            <li key={e.exerciseId} className="rounded border border-emerald-100 p-2 text-sm">
-              <p className="font-medium">{e.name}</p>
-              <p className="text-zinc-600">{e.primaryMuscle} • {e.equipment}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ExerciseLibraryList exercises={exercises} videos={videos} />
     </div>
   );
 }

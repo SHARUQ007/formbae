@@ -40,6 +40,10 @@ export default async function EditPlanPage({
       }))
   }));
   const traineeUsers = users.filter((u) => u.role === "user");
+  const lockedUser = actor.role === "trainer" ? traineeUsers.find((u) => u.userId === plan.userId && u.trainerId === actor.userId) : undefined;
+  if (actor.role === "trainer" && !lockedUser) {
+    redirect("/trainer/dashboard");
+  }
   const initialPlanText = buildPlanTextFromPayload(plan.title, plan.overallNotes, payload);
 
   return (
@@ -50,6 +54,7 @@ export default async function EditPlanPage({
         role={actor.role}
         action="/api/trainer/plans"
         users={traineeUsers.map((u) => ({ userId: u.userId, name: u.name, mobile: u.mobile }))}
+        lockedUser={lockedUser ? { userId: lockedUser.userId, name: lockedUser.name, mobile: lockedUser.mobile } : undefined}
         initialPlanId={plan.planId}
         initialUserId={plan.userId}
         initialTitle={plan.title}

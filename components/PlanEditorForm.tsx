@@ -14,6 +14,7 @@ type Props = {
   role: Role;
   action: string;
   users: UserOption[];
+  lockedUser?: UserOption;
   initialUserId?: string;
   initialPlanId?: string;
   initialTitle?: string;
@@ -260,14 +261,23 @@ export function PlanEditorForm(props: Props) {
   return (
     <form action={props.action} method="post" className="surface space-y-3 p-3 sm:p-4">
       {props.initialPlanId && <input type="hidden" name="planId" value={props.initialPlanId} />}
-
-      <label>User</label>
-      <select name="userId" defaultValue={props.initialUserId} required>
-        <option value="">Select trainee</option>
-        {props.users.map((u) => (
-          <option key={u.userId} value={u.userId}>{u.name} ({u.mobile})</option>
-        ))}
-      </select>
+      {props.lockedUser ? (
+        <>
+          <label>User</label>
+          <input value={`${props.lockedUser.name} (${props.lockedUser.mobile})`} readOnly className="bg-zinc-50 text-zinc-700" />
+          <input type="hidden" name="userId" value={props.lockedUser.userId} />
+        </>
+      ) : (
+        <>
+          <label>User</label>
+          <select name="userId" defaultValue={props.initialUserId} required>
+            <option value="">Select trainee</option>
+            {props.users.map((u) => (
+              <option key={u.userId} value={u.userId}>{u.name} ({u.mobile})</option>
+            ))}
+          </select>
+        </>
+      )}
 
       <label>Plan title</label>
       <input name="title" defaultValue={props.initialTitle} required />

@@ -5,14 +5,16 @@ import { uid } from "@/lib/sheets/base";
 
 export async function POST(request: NextRequest) {
   const session = await getSessionUser();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return NextResponse.redirect(new URL("/login", request.url));
 
   const form = await request.formData();
   const exerciseId = String(form.get("exerciseId") ?? "");
   const videoUrl = String(form.get("videoUrl") ?? "");
   const reason = String(form.get("reason") ?? "bad fit");
 
-  if (!exerciseId || !videoUrl) return NextResponse.json({ error: "exerciseId and videoUrl required" }, { status: 400 });
+  if (!exerciseId || !videoUrl) {
+    return NextResponse.redirect(new URL(session.role === "trainer" ? "/trainer/exercises" : "/app/today", request.url));
+  }
 
   if (session.role === "trainer") {
     await repo.append("videos", {

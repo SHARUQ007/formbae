@@ -66,6 +66,13 @@ export async function POST(request: NextRequest) {
   }
 
   const isTrainer = session.role === "trainer";
+  if (isTrainer) {
+    const users = await repo.readUsers();
+    const assigned = users.find((u) => u.userId === userId && u.role === "user" && u.trainerId === session.userId);
+    if (!assigned) {
+      return NextResponse.json({ error: "You can only create plans for your assigned users." }, { status: 403 });
+    }
+  }
 
   let parsedDays: PlanDayInput[] = [];
   if (isTrainer) {

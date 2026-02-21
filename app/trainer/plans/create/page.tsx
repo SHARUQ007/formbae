@@ -10,7 +10,15 @@ export default async function CreatePlanPage({ searchParams }: { searchParams: P
     redirect("/app/today");
   }
   const params = await searchParams;
-  const users = (await repo.readUsers()).filter((u) => u.role === "user");
+  const users = (await repo.readUsers()).filter((u) => {
+    if (u.role !== "user") return false;
+    if (actor.role === "trainer") return u.trainerId === actor.userId;
+    return true;
+  });
+  const lockedUser = actor.role === "trainer" ? users.find((u) => u.userId === params.userId) : undefined;
+  if (actor.role === "trainer" && !lockedUser) {
+    redirect("/trainer/dashboard");
+  }
 
   return (
     <div className="page-shell max-w-4xl">
@@ -19,7 +27,8 @@ export default async function CreatePlanPage({ searchParams }: { searchParams: P
         role={actor.role}
         action="/api/trainer/plans"
         users={users.map((u) => ({ userId: u.userId, name: u.name, mobile: u.mobile }))}
-        initialUserId={params.userId}
+        lockedUser={lockedUser ? { userId: lockedUser.userId, name: lockedUser.name, mobile: lockedUser.mobile } : undefined}
+        initialUserId={lockedUser?.userId ?? params.userId}
         initialStatus="active"
         initialOverallNotes=""
         initialPlanJson="[]"

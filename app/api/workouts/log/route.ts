@@ -6,7 +6,9 @@ import { uid } from "@/lib/sheets/base";
 
 export async function POST(request: NextRequest) {
   const session = await getSessionUser();
-  if (!session || session.role !== "user") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session || session.role !== "user") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   const form = await request.formData();
   const quick = String(form.get("quick") ?? "") === "true";
@@ -14,7 +16,7 @@ export async function POST(request: NextRequest) {
   const planDayId = String(form.get("planDayId") ?? "");
 
   if (!planId || !planDayId) {
-    return NextResponse.json({ error: "planId and planDayId required" }, { status: 400 });
+    return NextResponse.redirect(new URL("/app/today", request.url));
   }
 
   if (quick) {

@@ -5,7 +5,7 @@ import { uid } from "@/lib/sheets/base";
 
 export async function POST(request: NextRequest) {
   const session = await getSessionUser();
-  if (!session || session.role !== "user") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session || session.role !== "user") return NextResponse.redirect(new URL("/login", request.url));
 
   const form = await request.formData();
   await repo.append("bodyLogs", {

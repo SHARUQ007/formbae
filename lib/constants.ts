@@ -30,7 +30,7 @@ export const SHEET_HEADERS: Record<string, string[]> = {
     "photosUrlsJson",
     "updatedAt"
   ],
-  Plans: ["planId", "userId", "trainerId", "title", "weekStartDate", "status", "overallNotes", "createdAt"],
+  Plans: ["planId", "userId", "trainerId", "title", "weekStartDate", "status", "overallNotes", "createdAt", "rawPlanText"],
   PlanDays: ["planDayId", "planId", "dayNumber", "focus", "notes"],
   Exercises: ["exerciseId", "name", "primaryMuscle", "equipment", "defaultCuesJson"],
   PlanDayExercises: ["planDayId", "exerciseId", "order", "sets", "reps", "restSec", "notes", "videoId", "videoUrl"],

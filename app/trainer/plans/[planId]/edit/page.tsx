@@ -44,7 +44,7 @@ export default async function EditPlanPage({
   if (actor.role === "trainer" && !lockedUser) {
     redirect("/trainer/dashboard");
   }
-  const initialPlanText = buildPlanTextFromPayload(plan.title, plan.overallNotes, payload);
+  const initialPlanText = plan.rawPlanText || buildPlanTextFromPayload(plan.title, plan.overallNotes, payload);
 
   return (
     <div className="page-shell max-w-4xl">

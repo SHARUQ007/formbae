@@ -57,7 +57,8 @@ export async function POST(request: NextRequest) {
   const status = String(form.get("status") ?? "active");
   let overallNotes = String(form.get("overallNotes") ?? "").trim();
   const planJson = String(form.get("planJson") ?? "[]");
-  const planText = String(form.get("planText") ?? "").trim();
+  const rawPlanText = String(form.get("planText") ?? "");
+  const planText = rawPlanText.trim();
   const dayWiseJson = String(form.get("dayWiseJson") ?? "").trim();
   const confirmPlan = String(form.get("confirmPlan") ?? "");
 
@@ -150,7 +151,8 @@ export async function POST(request: NextRequest) {
     weekStartDate,
     status,
     overallNotes,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    rawPlanText
   });
   if (status === "active") {
     await ensureSingleActivePlanForUser(userId, planId);

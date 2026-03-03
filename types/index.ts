@@ -35,6 +35,7 @@ export type PlanRow = {
   status: string;
   overallNotes: string;
   createdAt: string;
+  rawPlanText: string;
 };
 
 export type PlanDayRow = {

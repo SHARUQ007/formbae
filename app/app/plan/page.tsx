@@ -27,6 +27,12 @@ export default async function PlanPage() {
           <pre className="whitespace-pre-wrap text-sm text-zinc-700">{plan.overallNotes}</pre>
         </section>
       )}
+      {plan.rawPlanText && (
+        <section className="surface p-4">
+          <h3 className="mb-2 font-semibold">Trainer Original Workout Text</h3>
+          <pre className="whitespace-pre-wrap text-sm text-zinc-700">{plan.rawPlanText}</pre>
+        </section>
+      )}
       {plan.days.map((d, dayIdx) => (
         <section key={`${d.planDayId}-${dayIdx}`} className="surface p-4">
           <h3 className="font-semibold">Day {d.dayNumber}: {d.focus}</h3>

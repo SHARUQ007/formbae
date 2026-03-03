@@ -48,7 +48,11 @@ async function upsertByKey<T extends TabRow>(tab: keyof typeof SHEETS, key: keyo
   const sheetName = SHEETS[tab];
   const allRows = await readSheet(sheetName);
   const headers = SHEET_HEADERS[sheetName];
-  const headerRow = allRows[0] ?? headers;
+  const existingHeader = allRows[0] ?? [];
+  const headerMismatch =
+    existingHeader.length !== headers.length ||
+    headers.some((header, index) => (existingHeader[index] ?? "") !== header);
+  const headerRow = headerMismatch ? headers : existingHeader;
   const keyIndex = headers.indexOf(key);
   const itemValues = headers.map((h) => (item as Record<string, string>)[h] ?? "");
 

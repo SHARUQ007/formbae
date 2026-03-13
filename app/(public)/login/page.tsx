@@ -1,6 +1,13 @@
 import { SectionTitle } from "@/components/SectionTitle";
+import { getSessionUser } from "@/lib/auth/session";
+import { redirect } from "next/navigation";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const session = await getSessionUser();
+  if (session) {
+    redirect(session.role === "admin" ? "/admin/dashboard" : session.role === "trainer" ? "/trainer/dashboard" : "/app/today");
+  }
+
   const params = await searchParams;
   return (
     <div className="mx-auto w-full max-w-md space-y-4">

@@ -76,7 +76,7 @@ export default async function TodayPage({
 
   return (
     <div className="page-shell">
-      <SectionTitle title="Today" subtitle={`${plan.title} • Day ${todayDay.dayNumber}`} />
+      <SectionTitle title="Today" subtitle={`${plan.title} • Day ${todayDay.dayNumber} • Coach: ${trainerName}`} />
       {plan.overallNotes && (
         <div className="surface p-3 text-sm">
           <p className="mb-1 font-medium">Overall Notes</p>

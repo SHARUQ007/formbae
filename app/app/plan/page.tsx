@@ -1,5 +1,6 @@
 import { SectionTitle } from "@/components/SectionTitle";
 import { requireUser } from "@/lib/auth/guard";
+import { repo } from "@/lib/repo/sheets-repo";
 import { getPlanForUser } from "@/lib/services/plans";
 
 function isDurationExercise(exerciseName: string, reps: string): boolean {
@@ -17,10 +18,12 @@ export default async function PlanPage() {
   const user = await requireUser("user");
   const plan = await getPlanForUser(user.userId);
   if (!plan) return <p>No active plan assigned.</p>;
+  const users = await repo.readUsers();
+  const trainerName = users.find((u) => u.userId === plan.trainerId)?.name || "Trainer";
 
   return (
     <div className="page-shell">
-      <SectionTitle title={plan.title} subtitle={`Week starting ${plan.weekStartDate}`} />
+      <SectionTitle title={plan.title} subtitle={`Week starting ${plan.weekStartDate} • Coach: ${trainerName}`} />
       {plan.overallNotes && (
         <section className="surface p-4">
           <h3 className="mb-2 font-semibold">Overall Notes</h3>

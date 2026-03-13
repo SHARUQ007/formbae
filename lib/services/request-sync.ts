@@ -47,6 +47,7 @@ export async function syncApprovedRequestsToUsers(): Promise<number> {
           weight: "",
           height: "",
           age: "",
+          gender: "",
           chest: "",
           waist: "",
           biceps: "",
@@ -54,6 +55,7 @@ export async function syncApprovedRequestsToUsers(): Promise<number> {
           allergies: "",
           lifestyleJson: "{}",
           trainingDays: "",
+          languagePreferencesJson: "[]",
           photosUrlsJson: "{}",
           updatedAt: new Date().toISOString()
         });
@@ -78,6 +80,7 @@ export async function syncApprovedRequestsToUsers(): Promise<number> {
       weight: "",
       height: "",
       age: "",
+      gender: "",
       chest: "",
       waist: "",
       biceps: "",
@@ -85,6 +88,7 @@ export async function syncApprovedRequestsToUsers(): Promise<number> {
       allergies: "",
       lifestyleJson: "{}",
       trainingDays: "",
+      languagePreferencesJson: "[]",
       photosUrlsJson: "{}",
       updatedAt: new Date().toISOString()
     });

@@ -123,6 +123,7 @@ export async function POST(request: NextRequest) {
       weight: "",
       height: "",
       age: "",
+      gender: "",
       chest: "",
       waist: "",
       biceps: "",
@@ -130,6 +131,7 @@ export async function POST(request: NextRequest) {
       allergies: "",
       lifestyleJson: "{}",
       trainingDays: "",
+      languagePreferencesJson: "[]",
       photosUrlsJson: "{}",
       updatedAt: new Date().toISOString()
     });

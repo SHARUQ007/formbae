@@ -31,12 +31,23 @@ type TabRow =
 
 async function readTab<T extends Record<string, string>>(tab: keyof typeof SHEETS): Promise<T[]> {
   const sheetName = SHEETS[tab];
+  const canonicalHeaders = SHEET_HEADERS[sheetName];
   const raw = await readSheet(sheetName);
   if (raw.length === 0) {
-    await appendRows(sheetName, [SHEET_HEADERS[sheetName]]);
+    await appendRows(sheetName, [canonicalHeaders]);
     return [];
   }
-  return toObjects<T>(raw, SHEET_HEADERS[sheetName]);
+
+  const sourceHeaders = raw[0] ?? canonicalHeaders;
+  const body = raw.length > 1 ? raw.slice(1) : [];
+  const normalized = body.map((row) =>
+    canonicalHeaders.map((header) => {
+      const sourceIndex = sourceHeaders.indexOf(header);
+      return sourceIndex >= 0 ? (row[sourceIndex] ?? "") : "";
+    })
+  );
+
+  return toObjects<T>([canonicalHeaders, ...normalized], canonicalHeaders);
 }
 
 function toRowValues(tab: keyof typeof SHEETS, row: TabRow): string[] {
@@ -48,19 +59,17 @@ async function upsertByKey<T extends TabRow>(tab: keyof typeof SHEETS, key: keyo
   const sheetName = SHEETS[tab];
   const allRows = await readSheet(sheetName);
   const headers = SHEET_HEADERS[sheetName];
-  const existingHeader = allRows[0] ?? [];
-  const headerMismatch =
-    existingHeader.length !== headers.length ||
-    headers.some((header, index) => (existingHeader[index] ?? "") !== header);
-  const headerRow = headerMismatch ? headers : existingHeader;
+  const sourceHeaders = allRows[0] ?? headers;
   const keyIndex = headers.indexOf(key);
   const itemValues = headers.map((h) => (item as Record<string, string>)[h] ?? "");
 
-  const bodyRows = (allRows.length > 1 ? allRows.slice(1) : []).map((row) => {
-    const normalized = [...row];
-    while (normalized.length < headers.length) normalized.push("");
-    return normalized;
-  });
+  const sourceBody = allRows.length > 1 ? allRows.slice(1) : [];
+  const bodyRows = sourceBody.map((row) =>
+    headers.map((header) => {
+      const sourceIndex = sourceHeaders.indexOf(header);
+      return sourceIndex >= 0 ? (row[sourceIndex] ?? "") : "";
+    })
+  );
 
   const keyValue = String(item[key] ?? "").trim();
   const existingIndex = bodyRows.findIndex((row) => String(row[keyIndex] ?? "").trim() === keyValue);
@@ -70,7 +79,7 @@ async function upsertByKey<T extends TabRow>(tab: keyof typeof SHEETS, key: keyo
     bodyRows.push(itemValues);
   }
 
-  await overwriteRows(sheetName, [headerRow, ...bodyRows]);
+  await overwriteRows(sheetName, [headers, ...bodyRows]);
 }
 
 export const repo = {

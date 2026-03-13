@@ -15,6 +15,7 @@ export type ProfileRow = {
   weight: string;
   height: string;
   age: string;
+  gender: string;
   chest: string;
   waist: string;
   biceps: string;
@@ -22,6 +23,7 @@ export type ProfileRow = {
   allergies: string;
   lifestyleJson: string;
   trainingDays: string;
+  languagePreferencesJson: string;
   photosUrlsJson: string;
   updatedAt: string;
 };

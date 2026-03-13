@@ -6,6 +6,24 @@ import { requireUser } from "@/lib/auth/guard";
 import { repo } from "@/lib/repo/sheets-repo";
 import { getUserProgress } from "@/lib/services/progress";
 
+function formatLanguages(raw: string | undefined): string {
+  if (!raw) return "-";
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (Array.isArray(parsed)) {
+      const cleaned = parsed.map((entry) => String(entry).trim()).filter(Boolean);
+      return cleaned.length ? cleaned.join(", ") : "-";
+    }
+  } catch {
+    const cleaned = raw
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+    return cleaned.length ? cleaned.join(", ") : "-";
+  }
+  return "-";
+}
+
 export default async function TrainerUserPage({
   params,
   searchParams
@@ -49,7 +67,9 @@ export default async function TrainerUserPage({
           <p className="text-sm">Weight: {profile?.weight || "-"} kg</p>
           <p className="text-sm">Height: {profile?.height || "-"} cm</p>
           <p className="text-sm">Age: {profile?.age || "-"}</p>
+          <p className="text-sm">Gender: {profile?.gender || "-"}</p>
           <p className="text-sm">Diet: {profile?.dietPref || "-"}</p>
+          <p className="text-sm">Languages: {formatLanguages(profile?.languagePreferencesJson)}</p>
           <p className="text-sm">Training days: {profile?.trainingDays || "-"}/week</p>
         </Card>
         <Card title="Progress Snapshot">

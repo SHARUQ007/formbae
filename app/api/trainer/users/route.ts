@@ -5,6 +5,26 @@ import { uid } from "@/lib/sheets/base";
 import { normalizeEnabledFlag } from "@/lib/utils/flags";
 import { isValidMobile, normalizeMobile } from "@/lib/utils/mobile";
 
+function normalizeGender(value: string): string {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "male" || normalized === "female" || normalized === "other") return normalized;
+  return "";
+}
+
+function extractLanguagePreferences(form: FormData): string {
+  const values = form
+    .getAll("languagePreferences")
+    .map((entry) => String(entry).trim())
+    .filter(Boolean);
+  return JSON.stringify(Array.from(new Set(values)));
+}
+
+function normalizeTrainingDays(value: string): string {
+  const n = Number(value.trim());
+  if (Number.isInteger(n) && n >= 1 && n <= 7) return String(n);
+  return "";
+}
+
 export async function POST(request: NextRequest) {
   const session = await getSessionUser();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -105,13 +125,15 @@ export async function POST(request: NextRequest) {
       weight: String(form.get("weight") ?? ""),
       height: String(form.get("height") ?? ""),
       age: String(form.get("age") ?? ""),
+      gender: normalizeGender(String(form.get("gender") ?? "")),
       chest: String(form.get("chest") ?? ""),
       waist: String(form.get("waist") ?? ""),
       biceps: String(form.get("biceps") ?? ""),
       dietPref: String(form.get("dietPref") ?? ""),
       allergies: String(form.get("allergies") ?? ""),
       lifestyleJson: String(form.get("lifestyleJson") ?? "{}"),
-      trainingDays: String(form.get("trainingDays") ?? ""),
+      trainingDays: normalizeTrainingDays(String(form.get("trainingDays") ?? "")),
+      languagePreferencesJson: extractLanguagePreferences(form),
       photosUrlsJson: String(form.get("photosUrlsJson") ?? "{}"),
       updatedAt: new Date().toISOString()
     });
@@ -181,6 +203,7 @@ export async function POST(request: NextRequest) {
         weight: "",
         height: "",
         age: "",
+        gender: "",
         chest: "",
         waist: "",
         biceps: "",
@@ -188,6 +211,7 @@ export async function POST(request: NextRequest) {
         allergies: "",
         lifestyleJson: "{}",
         trainingDays: "",
+        languagePreferencesJson: "[]",
         photosUrlsJson: "{}",
         updatedAt: new Date().toISOString()
       });
@@ -266,6 +290,7 @@ export async function POST(request: NextRequest) {
         weight: "",
         height: "",
         age: "",
+        gender: "",
         chest: "",
         waist: "",
         biceps: "",
@@ -273,6 +298,7 @@ export async function POST(request: NextRequest) {
         allergies: "",
         lifestyleJson: "{}",
         trainingDays: "",
+        languagePreferencesJson: "[]",
         photosUrlsJson: "{}",
         updatedAt: new Date().toISOString()
       });
@@ -317,6 +343,7 @@ export async function POST(request: NextRequest) {
     weight: "",
     height: "",
     age: "",
+    gender: "",
     chest: "",
     waist: "",
     biceps: "",
@@ -324,6 +351,7 @@ export async function POST(request: NextRequest) {
     allergies: "",
     lifestyleJson: "{}",
     trainingDays: "",
+    languagePreferencesJson: "[]",
     photosUrlsJson: "{}",
     updatedAt: new Date().toISOString()
   });

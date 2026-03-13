@@ -20,6 +20,7 @@ export const SHEET_HEADERS: Record<string, string[]> = {
     "weight",
     "height",
     "age",
+    "gender",
     "chest",
     "waist",
     "biceps",
@@ -27,6 +28,7 @@ export const SHEET_HEADERS: Record<string, string[]> = {
     "allergies",
     "lifestyleJson",
     "trainingDays",
+    "languagePreferencesJson",
     "photosUrlsJson",
     "updatedAt"
   ],

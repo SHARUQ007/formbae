@@ -75,21 +75,21 @@ export default async function TodayPage({
   const scheduledDay = plan.days.find((d) => Number(d.dayNumber) === slot) ?? null;
 
   return (
-    <div className="page-shell">
+    <div className="page-shell px-3 pb-4 sm:px-0">
       <SectionTitle title="Today" subtitle={`${plan.title} • Day ${todayDay.dayNumber} • Coach: ${trainerName}`} />
       {plan.overallNotes && (
-        <div className="surface p-3 text-sm">
+        <div className="surface p-3 text-sm sm:p-4">
           <p className="mb-1 font-medium">Overall Notes</p>
           <pre className="whitespace-pre-wrap text-zinc-700">{plan.overallNotes}</pre>
         </div>
       )}
-      <div className="surface p-3 text-sm">
+      <div className="surface p-3 text-sm sm:p-4">
         <p className="mb-2">Need the complete weekly split?</p>
         <Link href="/app/plan" className="text-emerald-700 underline">
           View Full Workout Plan
         </Link>
       </div>
-      <div className="rounded-xl border border-zinc-300 bg-zinc-100 px-3 py-2 text-sm text-zinc-700">
+      <div className="surface rounded-xl border-zinc-200 bg-zinc-50 px-3 py-3 text-sm text-zinc-700">
         <p className="mb-2 text-base font-semibold text-zinc-900">
           Scheduled today: {scheduledDay ? `Day ${scheduledDay.dayNumber} - ${scheduledDay.focus}` : "Rest / no assigned day"}
         </p>
@@ -104,7 +104,7 @@ export default async function TodayPage({
               </option>
             ))}
           </select>
-          <button type="submit" className="btn btn-muted">
+          <button type="submit" className="btn btn-muted w-full sm:w-auto">
             Switch
           </button>
         </form>
@@ -116,7 +116,7 @@ export default async function TodayPage({
             const pack = parseCuePack(e.cuesJson);
             const repsValue = cleanReps(e.reps);
             return (
-              <li key={`${e.planDayId}-${e.exerciseId}-${exIdx}`} className="rounded border border-emerald-100 p-3">
+              <li key={`${e.planDayId}-${e.exerciseId}-${exIdx}`} className="rounded-xl border border-emerald-100 p-3 sm:p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-medium">{e.exerciseName}</p>
                   <ExerciseCompleteToggle
@@ -149,7 +149,7 @@ export default async function TodayPage({
                   <input type="hidden" name="exerciseId" value={e.exerciseId} />
                   <input type="hidden" name="videoUrl" value={e.videoUrl} />
                   <input type="hidden" name="reason" value="user_reported_bad_video" />
-                  <button type="submit" className="btn btn-secondary text-xs">
+                  <button type="submit" className="btn btn-secondary w-full text-xs sm:w-auto">
                     Report bad video
                   </button>
                 </form>
@@ -225,7 +225,7 @@ export default async function TodayPage({
         <form action="/api/messages" method="post" className="mb-3 flex flex-col gap-2 sm:flex-row">
           <input type="hidden" name="planId" value={plan.planId} />
           <input name="text" placeholder="Ask your trainer a question" autoComplete="off" autoCorrect="off" spellCheck={false} required />
-          <button className="btn btn-primary" type="submit">
+          <button className="btn btn-primary w-full sm:w-auto" type="submit">
             Send
           </button>
         </form>

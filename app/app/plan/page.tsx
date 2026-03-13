@@ -22,25 +22,25 @@ export default async function PlanPage() {
   const trainerName = users.find((u) => u.userId === plan.trainerId)?.name || "Trainer";
 
   return (
-    <div className="page-shell">
+    <div className="page-shell px-3 pb-4 sm:px-0">
       <SectionTitle title={plan.title} subtitle={`Week starting ${plan.weekStartDate} • Coach: ${trainerName}`} />
       {plan.overallNotes && (
-        <section className="surface p-4">
+        <section className="surface p-3 sm:p-4">
           <h3 className="mb-2 font-semibold">Overall Notes</h3>
           <pre className="whitespace-pre-wrap text-sm text-zinc-700">{plan.overallNotes}</pre>
         </section>
       )}
       {plan.rawPlanText && (
-        <section className="surface p-4">
+        <section className="surface p-3 sm:p-4">
           <h3 className="mb-2 font-semibold">Trainer Original Workout Text</h3>
-          <pre className="whitespace-pre-wrap text-sm text-zinc-700">{plan.rawPlanText}</pre>
+          <pre className="max-h-[360px] overflow-auto whitespace-pre-wrap text-sm text-zinc-700">{plan.rawPlanText}</pre>
         </section>
       )}
       {plan.days.map((d, dayIdx) => (
-        <section key={`${d.planDayId}-${dayIdx}`} className="surface p-4">
+        <section key={`${d.planDayId}-${dayIdx}`} className="surface p-3 sm:p-4">
           <h3 className="font-semibold">Day {d.dayNumber}: {d.focus}</h3>
           <p className="mb-2 text-sm text-zinc-600">{d.notes}</p>
-          <ul className="space-y-2">
+          <ul className="space-y-2 rounded-lg border border-emerald-100 bg-emerald-50/30 p-2 sm:p-3">
             {d.exercises.map((e, exIdx) => (
               <li key={`${d.planDayId}-${e.exerciseId}-${exIdx}`} className="break-words text-sm">
                 {(() => {

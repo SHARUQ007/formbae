@@ -89,30 +89,42 @@ export function ExerciseVideoPlayer({ planDayId, exerciseId, exerciseName, initi
   if (!videoUrl) return null;
 
   return (
-    <div className="mt-2 space-y-2">
+    <div className="mt-3 space-y-2">
       {videoId ? (
         showEmbed ? (
-          <div className="overflow-hidden rounded-lg border border-emerald-100">
-            <iframe
-              src={`https://www.youtube.com/embed/${videoId}`}
-              title={`${exerciseName} short`}
-              className="h-52 w-full sm:h-64 md:h-80"
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+          <div className="mx-auto w-full max-w-[320px] rounded-2xl border border-emerald-100 bg-white p-2 shadow-sm">
+            <div className="mb-2 flex items-center justify-between px-1">
+              <p className="text-xs font-medium text-zinc-700">Form Clip</p>
+              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-600">Reel</span>
+            </div>
+            <div className="relative aspect-[9/16] overflow-hidden rounded-xl bg-black">
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title={`${exerciseName} short`}
+                className="absolute inset-0 h-full w-full"
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
         ) : (
-          <div className="space-y-2 rounded-lg border border-emerald-100 bg-zinc-50 p-2">
-            {thumbnailUrl ? (
-              <img
-                src={thumbnailUrl}
-                alt={`${exerciseName} video preview`}
-                className="h-44 w-full rounded object-cover sm:h-56"
-                loading="lazy"
-              />
-            ) : null}
+          <div className="mx-auto w-full max-w-[320px] space-y-2 rounded-2xl border border-emerald-100 bg-zinc-50 p-2">
+            <div className="mb-1 flex items-center justify-between px-1">
+              <p className="text-xs font-medium text-zinc-700">Form Clip</p>
+              <span className="rounded-full bg-zinc-200 px-2 py-0.5 text-[10px] text-zinc-600">Preview</span>
+            </div>
+            <div className="relative aspect-[9/16] overflow-hidden rounded-xl bg-zinc-200">
+              {thumbnailUrl ? (
+                <img
+                  src={thumbnailUrl}
+                  alt={`${exerciseName} video preview`}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  loading="lazy"
+                />
+              ) : null}
+            </div>
             <p className="text-xs text-zinc-600">
               {!isOnline
                 ? "You are offline. Video streaming is unavailable."
@@ -136,9 +148,11 @@ export function ExerciseVideoPlayer({ planDayId, exerciseId, exerciseName, initi
           </div>
         )
       ) : (
-        <a href={videoUrl} target="_blank" className="inline-block text-sm text-emerald-700 underline" rel="noreferrer">
-          Watch short
-        </a>
+        <div className="mx-auto w-full max-w-[320px] rounded-2xl border border-emerald-100 bg-zinc-50 p-3 text-center">
+          <a href={videoUrl} target="_blank" className="inline-block text-sm text-emerald-700 underline" rel="noreferrer">
+            Watch short
+          </a>
+        </div>
       )}
       <button type="button" onClick={replaceVideo} disabled={loading} className="btn btn-muted text-xs">
         {loading ? "Finding another video..." : "Try another"}

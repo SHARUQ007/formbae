@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Props = {
   planDayId: string;
@@ -31,6 +31,7 @@ export function ExerciseVideoPlayer({ planDayId, exerciseId, exerciseName, initi
   const [isOnline, setIsOnline] = useState(true);
   const [preferLightMode, setPreferLightMode] = useState(false);
   const [showEmbed, setShowEmbed] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const videoId = useMemo(() => getYouTubeVideoId(videoUrl), [videoUrl]);
   const youtubeWatchUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : videoUrl;
   const thumbnailUrl = videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : "";
@@ -86,6 +87,17 @@ export function ExerciseVideoPlayer({ planDayId, exerciseId, exerciseName, initi
     }
   }
 
+  function replayWithoutReload() {
+    const frame = iframeRef.current;
+    if (!frame?.contentWindow) {
+      setMessage("Player not ready yet.");
+      return;
+    }
+    frame.contentWindow.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }), "*");
+    frame.contentWindow.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+    setMessage("Replaying without reloading.");
+  }
+
   if (!videoUrl) return null;
 
   return (
@@ -99,7 +111,8 @@ export function ExerciseVideoPlayer({ planDayId, exerciseId, exerciseName, initi
             </div>
             <div className="relative aspect-[9/16] overflow-hidden rounded-xl bg-black">
               <iframe
-                src={`https://www.youtube.com/embed/${videoId}`}
+                ref={iframeRef}
+                src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&playsinline=1&rel=0`}
                 title={`${exerciseName} short`}
                 className="absolute inset-0 h-full w-full"
                 loading="lazy"
@@ -154,9 +167,16 @@ export function ExerciseVideoPlayer({ planDayId, exerciseId, exerciseName, initi
           </a>
         </div>
       )}
-      <button type="button" onClick={replaceVideo} disabled={loading} className="btn btn-muted text-xs">
-        {loading ? "Finding another video..." : "Try another"}
-      </button>
+      <div className="flex flex-wrap gap-2">
+        {videoId && showEmbed && (
+          <button type="button" onClick={replayWithoutReload} className="btn btn-secondary text-xs">
+            Replay
+          </button>
+        )}
+        <button type="button" onClick={replaceVideo} disabled={loading} className="btn btn-muted text-xs">
+          {loading ? "Finding another video..." : "Try another"}
+        </button>
+      </div>
       {message && <p className="text-xs text-zinc-600">{message}</p>}
     </div>
   );

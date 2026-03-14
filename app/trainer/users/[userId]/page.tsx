@@ -211,32 +211,32 @@ export default async function TrainerUserPage({
                   : "border border-emerald-100 bg-white"
               }`}
             >
-              <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="min-w-0 break-words text-sm font-semibold text-zinc-900">{p.title}</p>
-                {p.planId === activePlanId && (
-                  <span className="inline-flex rounded-full border border-emerald-600 bg-emerald-600 px-2.5 py-1 text-xs font-semibold tracking-wide text-white">
-                    ACTIVE PLAN
-                  </span>
-                )}
-              </div>
-              <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                <Link href={`/trainer/plans/${p.planId}/edit`} className="btn btn-primary w-full text-xs">
-                  Edit Plan
-                </Link>
-                {p.planId === activePlanId ? (
-                  <Link href={`/trainer/users/${user.userId}/preview`} className="btn btn-secondary w-full text-xs">
-                    Preview POV
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                  {p.planId === activePlanId && (
+                    <span className="inline-flex rounded-full border border-emerald-600 bg-emerald-600 px-2.5 py-1 text-xs font-semibold tracking-wide text-white">
+                      ACTIVE PLAN
+                    </span>
+                  )}
+                  <Link href={`/trainer/plans/${p.planId}/edit`} className="btn btn-primary w-full text-xs sm:w-auto">
+                    Edit Plan
                   </Link>
-                ) : (
-                  <form action="/api/trainer/plans/set-active" method="post" className="w-full">
-                    <input type="hidden" name="planId" value={p.planId} />
-                    <input type="hidden" name="userId" value={user.userId} />
-                    <button type="submit" className="btn btn-muted w-full text-xs">
-                      Set Active
-                    </button>
-                  </form>
-                )}
-                <DeletePlanButton planId={p.planId} userId={user.userId} planTitle={p.title} />
+                  {p.planId === activePlanId ? (
+                    <Link href={`/trainer/users/${user.userId}/preview`} className="btn btn-secondary w-full text-xs sm:w-auto">
+                      Preview POV
+                    </Link>
+                  ) : (
+                    <form action="/api/trainer/plans/set-active" method="post" className="w-full sm:w-auto">
+                      <input type="hidden" name="planId" value={p.planId} />
+                      <input type="hidden" name="userId" value={user.userId} />
+                      <button type="submit" className="btn btn-muted w-full text-xs sm:w-auto">
+                        Set Active
+                      </button>
+                    </form>
+                  )}
+                  <DeletePlanButton planId={p.planId} userId={user.userId} planTitle={p.title} />
+                </div>
               </div>
             </li>
           ))}

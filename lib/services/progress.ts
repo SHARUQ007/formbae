@@ -53,10 +53,9 @@ export async function getUserProgress(userId: string) {
   const completed = completedSessionsThisWeek.size;
   const planned = plannedFromProfile || sessionMap.size;
 
-  const dayOfWeekMondayBased = Math.min(7, Math.max(1, (now.getDay() + 6) % 7 + 1)); // Mon=1 ... Sun=7
-  const expectedByToday =
-    planned > 0 ? Math.min(planned, Math.max(1, Math.ceil((dayOfWeekMondayBased * planned) / 7))) : 0;
-  const adherencePct = expectedByToday ? Math.min(100, Math.round((completed / expectedByToday) * 100)) : 0;
+  // Weekly adherence = completed workouts this week / weekly target.
+  // This is more intuitive for users than pace-by-today percentages.
+  const adherencePct = planned > 0 ? Math.min(100, Math.round((completed / planned) * 100)) : 0;
 
   const completionHistory = Array.from(sessionMap.entries())
     .filter(([, v]) => v.completed)

@@ -21,6 +21,7 @@ export type ProfileRow = {
   waist: string;
   biceps: string;
   dietPref: string;
+  fitnessGoal: string;
   allergies: string;
   lifestyleJson: string;
   trainingDays: string;

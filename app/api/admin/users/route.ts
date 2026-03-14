@@ -130,6 +130,7 @@ export async function POST(request: NextRequest) {
       waist: "",
       biceps: "",
       dietPref: "",
+      fitnessGoal: "",
       allergies: "",
       lifestyleJson: "{}",
       trainingDays: "",

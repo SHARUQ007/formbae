@@ -18,7 +18,7 @@ export function LanguagePreferencePicker({ selectedLanguages }: Props) {
               defaultChecked={selectedLanguages.includes(language)}
               className="peer sr-only"
             />
-            <span className="flex min-h-11 items-center justify-center rounded-xl border border-emerald-200 bg-white px-2 py-2 text-center text-[15px] text-zinc-700 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:font-semibold sm:text-sm">
+            <span className="flex min-h-10 items-center justify-center rounded-lg border border-emerald-100 bg-zinc-50 px-2 py-2 text-center text-sm text-zinc-600 transition-colors peer-hover:bg-white peer-checked:border-emerald-300 peer-checked:bg-emerald-50 peer-checked:text-emerald-800 sm:min-h-11">
               {language}
             </span>
           </label>

@@ -26,6 +26,7 @@ export const SHEET_HEADERS: Record<string, string[]> = {
     "waist",
     "biceps",
     "dietPref",
+    "fitnessGoal",
     "allergies",
     "lifestyleJson",
     "trainingDays",

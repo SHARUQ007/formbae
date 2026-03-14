@@ -49,6 +49,16 @@ export default async function OnboardingPage() {
           <label>Diet Preference</label>
           <input name="dietPref" defaultValue={profile?.dietPref} placeholder="veg / non-veg / mixed" required />
         </div>
+        <div className="md:col-span-2">
+          <label>Fitness Goal</label>
+          <textarea
+            name="fitnessGoal"
+            defaultValue={profile?.fitnessGoal}
+            placeholder="e.g. Lose fat, improve stamina, and build lean muscle over the next 4 months."
+            rows={3}
+            required
+          />
+        </div>
         <div>
           <label>Training Days (/week)</label>
           <select name="trainingDays" defaultValue={trainingDaysValue} className="pr-10" required>

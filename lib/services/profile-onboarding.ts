@@ -25,6 +25,7 @@ export function isProfileOnboardingComplete(profile: ProfileRow | undefined): bo
     profile.age,
     profile.gender,
     profile.dietPref,
+    profile.fitnessGoal,
     profile.trainingDays,
     profile.avatarIcon
   ].map((value) => String(value ?? "").trim());
@@ -36,4 +37,3 @@ export async function getProfileForUser(userId: string): Promise<ProfileRow | un
   const profiles = await repo.readProfiles();
   return profiles.find((p) => p.userId === userId);
 }
-

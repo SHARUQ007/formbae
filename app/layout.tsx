@@ -19,7 +19,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const userAvatar = user?.role === "user" ? userProfile?.avatarIcon || DEFAULT_AVATAR_ICON_ID : "";
   const homeHref = user?.role === "admin" ? "/admin/dashboard" : user?.role === "trainer" ? "/trainer/dashboard" : userOnboarded ? "/app/today" : "/app/onboarding";
   const navLinkClass =
-    "inline-flex shrink-0 items-center rounded-full px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-white hover:text-emerald-800 sm:px-3 sm:text-sm";
+    "inline-flex items-center rounded-full px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-white hover:text-emerald-800 sm:px-3 sm:text-sm";
+  const navClass = user
+    ? "order-3 w-full sm:order-none sm:w-auto sm:flex-1 sm:justify-end"
+    : "flex flex-1 justify-end";
 
   const navLinks: Array<{ href: string; label: string }> = !user
     ? [{ href: "/login", label: "Login" }]
@@ -46,12 +49,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <header className="sticky top-0 z-40 border-b border-emerald-100/80 bg-white/90 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center gap-2.5 px-2.5 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2.5 px-2.5 py-2.5 sm:flex-nowrap sm:gap-3 sm:px-4 sm:py-3">
             <div className="shrink-0">
               <BrandLogo href={homeHref} />
             </div>
-            <nav className="flex flex-1 justify-end overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <div className="inline-flex min-w-max items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50/80 p-1">
+            <nav className={`flex ${navClass}`}>
+              <div className="flex w-full flex-wrap items-center gap-1 rounded-2xl border border-emerald-100 bg-emerald-50/80 p-1 sm:w-auto sm:min-w-max sm:flex-nowrap sm:rounded-full">
                 {navLinks.map((link) => (
                   <Link key={link.href} href={link.href} className={navLinkClass}>
                     {link.label}

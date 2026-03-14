@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const userAvatar = user?.role === "user" ? userProfile?.avatarIcon || DEFAULT_AVATAR_ICON_ID : "";
   const homeHref = user?.role === "admin" ? "/admin/dashboard" : user?.role === "trainer" ? "/trainer/dashboard" : userOnboarded ? "/app/today" : "/app/onboarding";
   const navLinkClass =
-    "inline-flex w-full items-center justify-center rounded-full px-2.5 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-white hover:text-emerald-800 sm:w-auto sm:px-3 sm:py-1.5";
+    "inline-flex w-full items-center justify-center rounded-full px-2 py-2 text-[13px] font-medium text-zinc-600 transition-colors hover:bg-white hover:text-emerald-800 sm:w-auto sm:px-3 sm:py-1.5 sm:text-sm";
 
   const navLinks: Array<{ href: string; label: string }> = !user
     ? [{ href: "/login", label: "Login" }]
@@ -65,17 +65,28 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                   </form>
                 </div>
               )}
+              {!user && (
+                <div className="shrink-0">
+                  <Link href="/login" className="btn rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-emerald-50">
+                    Login
+                  </Link>
+                </div>
+              )}
             </div>
 
-            <nav className="mt-2 sm:mt-2">
-              <div className={`grid w-full gap-1 rounded-2xl border border-emerald-100 bg-emerald-50/80 p-1 ${mobileNavColsClass} sm:flex sm:w-auto sm:flex-wrap sm:rounded-full`}>
-                {navLinks.map((link) => (
-                  <Link key={link.href} href={link.href} className={navLinkClass}>
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </nav>
+            {user && (
+              <nav className="mt-2 sm:mt-2">
+                <div
+                  className={`grid w-full gap-1 rounded-2xl border border-emerald-100 bg-emerald-50/80 p-1 ${mobileNavColsClass} sm:flex sm:w-auto sm:flex-nowrap sm:rounded-full`}
+                >
+                  {navLinks.map((link) => (
+                    <Link key={link.href} href={link.href} className={navLinkClass}>
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </nav>
+            )}
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-3 py-4 sm:px-4 sm:py-6">{children}</main>

@@ -141,46 +141,61 @@ export default async function TodayPage({
             const pack = parseCuePack(e.cuesJson);
             const repsValue = cleanReps(e.reps);
             return (
-              <li key={`${e.planDayId}-${e.exerciseId}-${exIdx}`} className="rounded-xl border border-emerald-100 p-3 sm:p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="font-medium">{e.exerciseName}</p>
-                  <ExerciseCompleteToggle
-                    planId={plan.planId}
-                    planDayId={todayDay.planDayId}
-                    exerciseId={e.exerciseId}
-                    initialCompleted={exerciseDone.has(e.exerciseId)}
-                  />
+              <li
+                key={`${e.planDayId}-${e.exerciseId}-${exIdx}`}
+                className="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-[0_8px_24px_rgba(16,24,40,0.04)]"
+              >
+                <div className="space-y-3 p-3 sm:p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="space-y-1">
+                      <p className="text-base font-semibold tracking-tight text-zinc-900">{e.exerciseName}</p>
+                      {(() => {
+                        const reps = repsValue;
+                        const isDuration = isDurationExercise(e.exerciseName, reps);
+                        const meta = isDuration
+                          ? `${reps || "duration"} • rest ${e.restSec}s`
+                          : reps
+                            ? `${e.sets} sets • ${reps} reps • rest ${e.restSec}s`
+                            : `rest ${e.restSec}s`;
+                        return (
+                          <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">
+                            {meta}
+                          </span>
+                        );
+                      })()}
+                    </div>
+                    <div className="shrink-0">
+                      <ExerciseCompleteToggle
+                        planId={plan.planId}
+                        planDayId={todayDay.planDayId}
+                        exerciseId={e.exerciseId}
+                        initialCompleted={exerciseDone.has(e.exerciseId)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-emerald-100 bg-emerald-50/30 p-2">
+                    <ExerciseVideoPlayer
+                      planDayId={todayDay.planDayId}
+                      exerciseId={e.exerciseId}
+                      exerciseName={e.exerciseName}
+                      initialVideoUrl={e.videoUrl}
+                    />
+                  </div>
+
+                  <form action="/api/video/report" method="post" className="flex flex-wrap gap-2">
+                    <input type="hidden" name="exerciseId" value={e.exerciseId} />
+                    <input type="hidden" name="videoUrl" value={e.videoUrl} />
+                    <input type="hidden" name="reason" value="user_reported_bad_video" />
+                    <button type="submit" className="btn btn-secondary w-full text-xs sm:w-auto">
+                      Report bad video
+                    </button>
+                  </form>
                 </div>
-                {(() => {
-                  const reps = repsValue;
-                  const isDuration = isDurationExercise(e.exerciseName, reps);
-                  return (
-                <p className="text-sm text-zinc-600">
-                  {isDuration
-                    ? `${reps || "duration"} • rest ${e.restSec}s`
-                    : reps
-                      ? `${e.sets} sets • ${reps} reps • rest ${e.restSec}s`
-                      : `rest ${e.restSec}s`}
-                </p>
-                  );
-                })()}
-                <ExerciseVideoPlayer
-                  planDayId={todayDay.planDayId}
-                  exerciseId={e.exerciseId}
-                  exerciseName={e.exerciseName}
-                  initialVideoUrl={e.videoUrl}
-                />
-                <form action="/api/video/report" method="post" className="mt-2 flex flex-wrap gap-2">
-                  <input type="hidden" name="exerciseId" value={e.exerciseId} />
-                  <input type="hidden" name="videoUrl" value={e.videoUrl} />
-                  <input type="hidden" name="reason" value="user_reported_bad_video" />
-                  <button type="submit" className="btn btn-secondary w-full text-xs sm:w-auto">
-                    Report bad video
-                  </button>
-                </form>
-                <div className="mt-3 space-y-2">
+
+                <div className="border-t border-emerald-100 bg-zinc-50/60 p-3 sm:p-4">
                   <div className="grid gap-2 md:grid-cols-2">
-                    <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-2">
+                    <div className="rounded-lg border border-zinc-200 bg-white p-2.5">
                       <div className="mb-1 flex items-center gap-2">
                         <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[11px] font-semibold text-white">
                           C
@@ -197,7 +212,7 @@ export default async function TodayPage({
                       </ul>
                     </div>
 
-                    <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-2">
+                    <div className="rounded-lg border border-zinc-200 bg-white p-2.5">
                       <div className="mb-1 flex items-center gap-2">
                         <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[11px] font-semibold text-white">
                           M
@@ -215,7 +230,7 @@ export default async function TodayPage({
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">
+                  <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">
                     <span className="mr-2 inline-flex h-4 w-4 items-center justify-center rounded-full border border-amber-300 text-[10px] font-semibold">
                       !
                     </span>

@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const userAvatar = user?.role === "user" ? userProfile?.avatarIcon || DEFAULT_AVATAR_ICON_ID : "";
   const homeHref = user?.role === "admin" ? "/admin/dashboard" : user?.role === "trainer" ? "/trainer/dashboard" : userOnboarded ? "/app/today" : "/app/onboarding";
   const navLinkClass =
-    "inline-flex w-full items-center justify-center rounded-full px-2 py-2 text-[13px] font-medium text-zinc-600 transition-colors hover:bg-white hover:text-emerald-800 sm:w-auto sm:px-3 sm:py-1.5 sm:text-sm";
+    "inline-flex w-full items-center justify-center rounded-lg px-2 py-2 text-[13px] font-medium text-zinc-600 transition-colors hover:bg-white hover:text-emerald-800 sm:w-auto sm:rounded-full sm:px-3 sm:py-1.5 sm:text-sm";
 
   const navLinks: Array<{ href: string; label: string }> = !user
     ? [{ href: "/login", label: "Login" }]
@@ -42,24 +42,24 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             ]
           : [{ href: "/app/onboarding", label: "Onboarding" }];
   const mobileNavColsClass =
-    navLinks.length >= 4 ? "grid-cols-2" : navLinks.length === 3 ? "grid-cols-3" : navLinks.length === 2 ? "grid-cols-2" : "grid-cols-1";
+    navLinks.length >= 4 ? "grid-cols-4" : navLinks.length === 3 ? "grid-cols-3" : navLinks.length === 2 ? "grid-cols-2" : "grid-cols-1";
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <header className="sticky top-0 z-40 border-b border-emerald-100/80 bg-white/90 backdrop-blur">
-          <div className="mx-auto max-w-6xl px-2.5 py-2.5 sm:px-4 sm:py-3">
-            <div className="flex items-center justify-between gap-2">
+          <div className="mx-auto max-w-6xl px-2.5 py-2 sm:px-4 sm:py-3">
+            <div className="flex items-center justify-between gap-2.5">
               <BrandLogo href={homeHref} />
               {user && (
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50/60 p-1 shadow-sm">
                   {user.role === "user" && (
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 shadow-sm">
-                      <AvatarIcon iconId={userAvatar} className="h-5 w-5 text-emerald-700" />
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-200 bg-white">
+                      <AvatarIcon iconId={userAvatar} className="h-4 w-4 text-emerald-700" />
                     </span>
                   )}
                   <form action="/api/auth/logout" method="post">
-                    <button className="btn rounded-full border border-emerald-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 hover:bg-emerald-50" type="submit">
+                    <button className="btn rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-sm font-semibold text-zinc-700 hover:bg-emerald-100" type="submit">
                       Logout
                     </button>
                   </form>
@@ -67,7 +67,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               )}
               {!user && (
                 <div className="shrink-0">
-                  <Link href="/login" className="btn rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-emerald-50">
+                  <Link href="/login" className="btn rounded-full border border-emerald-200 bg-white px-4 py-1.5 text-sm font-semibold text-zinc-700 hover:bg-emerald-100">
                     Login
                   </Link>
                 </div>
@@ -77,7 +77,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             {user && (
               <nav className="mt-2 sm:mt-2">
                 <div
-                  className={`grid w-full gap-1 rounded-2xl border border-emerald-100 bg-emerald-50/80 p-1 ${mobileNavColsClass} sm:flex sm:w-auto sm:flex-nowrap sm:rounded-full`}
+                  className={`grid w-full gap-1 rounded-xl border border-emerald-100 bg-zinc-50 p-1.5 ${mobileNavColsClass} sm:flex sm:w-auto sm:flex-nowrap sm:rounded-full sm:bg-emerald-50/80 sm:p-1`}
                 >
                   {navLinks.map((link) => (
                     <Link key={link.href} href={link.href} className={navLinkClass}>

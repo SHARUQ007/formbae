@@ -48,19 +48,19 @@ export function AdminUserRow({ user, trainers }: Props) {
           <div className="flex flex-wrap gap-2 sm:col-span-2 lg:col-span-1">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary w-full sm:w-auto"
               onClick={() => setEditing(true)}
             >
               Edit
             </button>
-            <form action="/api/admin/users" method="post">
+            <form action="/api/admin/users" method="post" className="w-full sm:w-auto">
               <input type="hidden" name="action" value="setStatus" />
               <input type="hidden" name="userId" value={user.userId} />
               <button
                 className={
                   user.allowlistFlag === "enabled"
-                    ? "btn btn-danger"
-                    : "btn btn-secondary"
+                    ? "btn btn-danger w-full sm:w-auto"
+                    : "btn btn-secondary w-full sm:w-auto"
                 }
                 type="submit"
                 name="allowlistFlag"
@@ -108,19 +108,19 @@ export function AdminUserRow({ user, trainers }: Props) {
               )}
             </div>
             <div className="flex flex-wrap gap-2 sm:col-span-2 lg:col-span-1">
-              <button className="btn btn-secondary" type="submit">
+              <button className="btn btn-secondary w-full sm:w-auto" type="submit">
                 Save
               </button>
               <button
                 type="button"
-                className="btn btn-muted"
+                className="btn btn-muted w-full sm:w-auto"
                 onClick={() => setEditing(false)}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="btn btn-danger"
+                className="btn btn-danger w-full sm:w-auto"
                 onClick={() => setConfirmDelete(true)}
               >
                 Delete Permanently
@@ -143,7 +143,7 @@ export function AdminUserRow({ user, trainers }: Props) {
                   >
                     Cancel
                   </button>
-                  <form action="/api/admin/users" method="post">
+                  <form action="/api/admin/users" method="post" className="w-full sm:w-auto">
                     <input type="hidden" name="action" value="delete" />
                     <input type="hidden" name="userId" value={user.userId} />
                     <button type="submit" className="btn bg-red-700 text-white hover:bg-red-800">

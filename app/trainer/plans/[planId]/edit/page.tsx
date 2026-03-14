@@ -48,7 +48,7 @@ export default async function EditPlanPage({
 
   return (
     <div className="page-shell max-w-4xl">
-      <PlanSentModal initialOpen={query.sent === "1"} />
+      <PlanSentModal initialOpen={query.sent === "1"} previewHref={`/trainer/users/${plan.userId}/preview`} />
       <SectionTitle title={`Edit ${plan.title}`} />
       <PlanEditorForm
         role={actor.role}

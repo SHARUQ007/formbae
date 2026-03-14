@@ -6,14 +6,14 @@ export default async function NewUserPage({ searchParams }: { searchParams: Prom
   const params = await searchParams;
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-4">
+    <div className="mx-auto w-full max-w-4xl space-y-4 px-3 pb-4 sm:px-0">
       <SectionTitle title="Create Trainee" />
       {params.error === "mobile_exists" && (
         <p className="alert-error">
           That mobile number already exists. Use a unique number.
         </p>
       )}
-      <form action="/api/trainer/users" method="post" className="surface grid grid-cols-1 gap-3 p-4 md:grid-cols-2">
+      <form action="/api/trainer/users" method="post" className="surface grid grid-cols-1 gap-3 p-3 sm:p-4 md:grid-cols-2">
         <div className="md:col-span-2">
           <label>Name</label>
           <input name="name" required />

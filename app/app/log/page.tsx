@@ -18,9 +18,9 @@ export default async function LogPage() {
   const day = plan.days[0];
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-4">
+    <div className="mx-auto w-full max-w-4xl space-y-4 px-3 pb-4 sm:px-0">
       <SectionTitle title="Log Workout" subtitle="Track reps, weight, RPE and pain" />
-      <form action="/api/workouts/log" method="post" className="surface space-y-3 p-4">
+      <form action="/api/workouts/log" method="post" className="surface space-y-3 p-3 sm:p-4">
         <input type="hidden" name="planId" value={plan.planId} />
         <input type="hidden" name="planDayId" value={day.planDayId} />
         <label>Date</label>
@@ -30,7 +30,7 @@ export default async function LogPage() {
         <div className="space-y-2">
           <p className="text-sm font-semibold text-zinc-800">Exercises</p>
           {day.exercises.map((e, idx) => (
-            <div key={`${e.exerciseId}-${idx}`} className="rounded-xl border border-emerald-100 p-3">
+            <div key={`${e.exerciseId}-${idx}`} className="rounded-xl border border-emerald-100 p-2.5 sm:p-3">
               <input type="hidden" name="exerciseId" value={e.exerciseId} />
               <input type="hidden" name="setNumber" value="1" />
               <p className="mb-2 text-sm font-medium text-zinc-900">{e.exerciseName}</p>

@@ -5,9 +5,9 @@ export default async function RequestAccessPage() {
   const trainers = (await repo.readUsers()).filter((u) => u.role === "trainer");
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-4">
+    <div className="mx-auto w-full max-w-md space-y-4 px-3 pb-4 sm:px-0">
       <SectionTitle title="Request Access" subtitle="Your trainer will approve your mobile number." />
-      <form action="/api/request-access" method="post" className="surface space-y-3 p-4">
+      <form action="/api/request-access" method="post" className="surface space-y-3 p-3 sm:p-4">
         <label>Name</label>
         <input name="name" required />
         <label>Mobile</label>

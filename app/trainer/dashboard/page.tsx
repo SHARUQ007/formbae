@@ -52,7 +52,7 @@ export default async function TrainerDashboardPage({
   const pendingRequests = trainerPendingRequests.length;
 
   return (
-    <div className="page-shell">
+    <div className="page-shell px-3 pb-4 sm:px-0">
       <SectionTitle title="Trainer Dashboard" subtitle={`Welcome, ${trainer.name}`} />
       {params.error && (
         <p className="alert-error">
@@ -69,7 +69,7 @@ export default async function TrainerDashboardPage({
       {params.removed && <p className="alert-warn">User removed from your trainee list.</p>}
       {params.approved && <p className="alert-success">User enabled and added to your list.</p>}
       {params.statusUpdated && <p className="alert-success">User status updated.</p>}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
         <Stat label="Trainees" value={trainees.length} />
         <Stat label="Active Plans" value={activePlans} />
         <Stat label="Completed Workouts" value={completed} />
@@ -78,7 +78,7 @@ export default async function TrainerDashboardPage({
 
       <Card title="Trainees">
         <div className="mb-3 flex justify-end">
-          <Link href="/trainer/users/new" className="btn btn-primary">
+          <Link href="/trainer/users/new" className="btn btn-primary w-full sm:w-auto">
             Create User
           </Link>
         </div>
@@ -102,26 +102,26 @@ export default async function TrainerDashboardPage({
                 >
                   Create Plan
                 </Link>
-                <form action="/api/trainer/users" method="post">
+                <form action="/api/trainer/users" method="post" className="w-full sm:w-auto">
                   <input type="hidden" name="mode" value="removeExisting" />
                   <input type="hidden" name="userId" value={t.userId} />
-                  <button className="btn btn-secondary text-sm" type="submit">
+                  <button className="btn btn-secondary w-full text-sm sm:w-auto" type="submit">
                     Remove
                   </button>
                 </form>
                 {t.allowlistFlag === "enabled" ? (
-                  <form action="/api/trainer/users" method="post">
+                  <form action="/api/trainer/users" method="post" className="w-full sm:w-auto">
                     <input type="hidden" name="mode" value="setStatus" />
                     <input type="hidden" name="userId" value={t.userId} />
-                    <button className="btn btn-danger text-sm" type="submit" name="allowlistFlag" value="disabled">
+                    <button className="btn btn-danger w-full text-sm sm:w-auto" type="submit" name="allowlistFlag" value="disabled">
                       Disable
                     </button>
                   </form>
                 ) : (
-                  <form action="/api/trainer/users" method="post">
+                  <form action="/api/trainer/users" method="post" className="w-full sm:w-auto">
                     <input type="hidden" name="mode" value="setStatus" />
                     <input type="hidden" name="userId" value={t.userId} />
-                    <button className="btn btn-secondary text-sm" type="submit" name="allowlistFlag" value="enabled">
+                    <button className="btn btn-secondary w-full text-sm sm:w-auto" type="submit" name="allowlistFlag" value="enabled">
                       Enable
                     </button>
                   </form>
@@ -142,10 +142,10 @@ export default async function TrainerDashboardPage({
                 <p className="text-sm text-zinc-600">{r.mobile}</p>
                 <p className="text-xs text-zinc-500">{r.notes}</p>
               </div>
-              <form action="/api/trainer/users" method="post">
+              <form action="/api/trainer/users" method="post" className="w-full sm:w-auto">
                 <input type="hidden" name="mode" value="approveRequest" />
                 <input type="hidden" name="requestId" value={r.requestId} />
-                <button className="btn btn-primary" type="submit">
+                <button className="btn btn-primary w-full sm:w-auto" type="submit">
                   Enable User
                 </button>
               </form>
@@ -163,10 +163,10 @@ export default async function TrainerDashboardPage({
                 <p className="font-medium">{u.name}</p>
                 <p className="text-sm text-zinc-600">{u.mobile}</p>
               </div>
-              <form action="/api/trainer/users" method="post">
+              <form action="/api/trainer/users" method="post" className="w-full sm:w-auto">
                 <input type="hidden" name="mode" value="assignExisting" />
                 <input type="hidden" name="userId" value={u.userId} />
-                <button className="btn btn-primary" type="submit">
+                <button className="btn btn-primary w-full sm:w-auto" type="submit">
                   Add to My List
                 </button>
               </form>

@@ -1,9 +1,30 @@
 import { repo } from "@/lib/repo/sheets-repo";
 
+function getStartOfWeekMonday(date: Date): Date {
+  const copy = new Date(date);
+  const day = copy.getDay(); // 0=Sun, 1=Mon, ... 6=Sat
+  const diffToMonday = day === 0 ? -6 : 1 - day;
+  copy.setHours(0, 0, 0, 0);
+  copy.setDate(copy.getDate() + diffToMonday);
+  return copy;
+}
+
+function parseTrainingDays(raw: string): number {
+  const value = Number((raw || "").trim());
+  if (Number.isInteger(value) && value >= 1 && value <= 7) return value;
+  return 0;
+}
+
 export async function getUserProgress(userId: string) {
-  const [logs, sets, body] = await Promise.all([repo.readWorkoutLogs(), repo.readSetLogs(), repo.readBodyLogs()]);
+  const [logs, sets, body, profiles] = await Promise.all([
+    repo.readWorkoutLogs(),
+    repo.readSetLogs(),
+    repo.readBodyLogs(),
+    repo.readProfiles()
+  ]);
 
   const userLogs = logs.filter((l) => l.userId === userId);
+  const profile = profiles.find((p) => p.userId === userId);
   const sessionMap = new Map<string, { completed: boolean }>();
   for (const log of userLogs) {
     const key = `${log.date}::${log.planId}::${log.planDayId}`;
@@ -12,9 +33,31 @@ export async function getUserProgress(userId: string) {
     sessionMap.set(key, { completed: prev.completed || isCompletedRow });
   }
 
-  const planned = sessionMap.size;
-  const completed = Array.from(sessionMap.values()).filter((s) => s.completed).length;
-  const adherencePct = planned ? Math.round((completed / planned) * 100) : 0;
+  const plannedFromProfile = parseTrainingDays(profile?.trainingDays || "");
+  const now = new Date();
+  const weekStart = getStartOfWeekMonday(now);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 6);
+
+  const completedSessionsThisWeek = new Set<string>();
+  for (const [key, value] of sessionMap.entries()) {
+    if (!value.completed) continue;
+    const [date] = key.split("::");
+    const parsedDate = new Date(`${date}T00:00:00`);
+    if (Number.isNaN(parsedDate.getTime())) continue;
+    if (parsedDate >= weekStart && parsedDate <= weekEnd) {
+      completedSessionsThisWeek.add(key);
+    }
+  }
+
+  const completed = completedSessionsThisWeek.size;
+  const planned = plannedFromProfile || sessionMap.size;
+
+  const dayOfWeekMondayBased = Math.min(7, Math.max(1, (now.getDay() + 6) % 7 + 1)); // Mon=1 ... Sun=7
+  const expectedByToday =
+    planned > 0 ? Math.min(planned, Math.max(1, Math.ceil((dayOfWeekMondayBased * planned) / 7))) : 0;
+  const adherencePct = expectedByToday ? Math.min(100, Math.round((completed / expectedByToday) * 100)) : 0;
+
   const completionHistory = Array.from(sessionMap.entries())
     .filter(([, v]) => v.completed)
     .map(([k]) => {

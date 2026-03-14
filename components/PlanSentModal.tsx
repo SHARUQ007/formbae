@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export function PlanSentModal({ initialOpen }: { initialOpen: boolean }) {
+export function PlanSentModal({ initialOpen, previewHref }: { initialOpen: boolean; previewHref?: string }) {
   const [open, setOpen] = useState(initialOpen);
   const router = useRouter();
   const pathname = usePathname();
@@ -27,6 +28,11 @@ export function PlanSentModal({ initialOpen }: { initialOpen: boolean }) {
         </div>
         <h3 className="text-lg font-semibold text-zinc-900">Plan Sent Successfully</h3>
         <p className="mt-1 text-sm text-zinc-600">The workout plan has been assigned to the user.</p>
+        {previewHref && (
+          <Link href={previewHref} className="btn btn-secondary mt-3 w-full" onClick={closeModal}>
+            Preview User POV
+          </Link>
+        )}
         <button type="button" onClick={closeModal} className="btn btn-primary mt-4 w-full">
           Awesome
         </button>

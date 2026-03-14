@@ -23,7 +23,7 @@ export default async function ProfilePage({
     <div className="mx-auto w-full max-w-4xl space-y-4 px-3 pb-4 sm:px-0">
       <SectionTitle title="Profile" subtitle="Add or edit your basic details" />
       {params.updated === "1" && <p className="alert-success">Profile updated.</p>}
-      <form action="/api/trainer/users" method="post" className="surface grid grid-cols-1 gap-4 p-3 sm:p-4 md:grid-cols-2">
+      <form action="/api/trainer/users" method="post" className="surface grid grid-cols-1 gap-3 p-3 sm:gap-4 sm:p-4 md:grid-cols-2">
         <input type="hidden" name="mode" value="profile" />
         <input type="hidden" name="userId" value={user.userId} />
 

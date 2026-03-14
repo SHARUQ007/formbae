@@ -16,7 +16,7 @@ export function DeletePlanButton({ planId, userId, planTitle }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="btn btn-danger text-xs"
+        className="btn btn-danger w-full text-xs sm:w-auto"
       >
         Delete Plan
       </button>

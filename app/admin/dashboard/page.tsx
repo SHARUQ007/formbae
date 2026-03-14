@@ -35,7 +35,7 @@ export default async function AdminDashboardPage({
   const duplicateMobiles = Array.from(dupMap.entries()).filter(([, c]) => c > 1);
 
   return (
-    <div className="page-shell">
+    <div className="page-shell px-3 pb-4 sm:px-0">
       <SectionTitle title="Admin Dashboard" subtitle="Manage users, trainers, and allowlist." />
       {params.error && (
         <p className="alert-error">
@@ -54,7 +54,7 @@ export default async function AdminDashboardPage({
       {params.deleted && <p className="alert-success">Account permanently deleted.</p>}
       {params.approved && <p className="alert-success">Access request approved and user enabled.</p>}
 
-      <section className="surface p-4">
+      <section className="surface p-3 sm:p-4">
         <h2 className="mb-3 text-base font-semibold">Add Trainer</h2>
         <form action="/api/admin/users" method="post" className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <input type="hidden" name="action" value="create" />
@@ -80,7 +80,7 @@ export default async function AdminDashboardPage({
         </form>
       </section>
 
-      <section className="surface p-4">
+      <section className="surface p-3 sm:p-4">
         <h2 className="mb-3 text-base font-semibold">Create Account</h2>
         <form action="/api/admin/users" method="post" className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <input type="hidden" name="action" value="create" />
@@ -113,7 +113,7 @@ export default async function AdminDashboardPage({
         </form>
       </section>
 
-      <section className="surface p-4">
+      <section className="surface p-3 sm:p-4">
         <h2 className="mb-3 text-base font-semibold">Duplicate Mobile Numbers</h2>
         <ul className="space-y-1 text-sm">
           {duplicateMobiles.map(([mobile, count]) => (
@@ -123,7 +123,7 @@ export default async function AdminDashboardPage({
         </ul>
       </section>
 
-      <section className="surface p-4">
+      <section className="surface p-3 sm:p-4">
         <h2 className="mb-3 text-base font-semibold">Users</h2>
         <div className="space-y-2">
           {users.map((u) => (
@@ -132,7 +132,7 @@ export default async function AdminDashboardPage({
         </div>
       </section>
 
-      <section className="surface p-4">
+      <section className="surface p-3 sm:p-4">
         <h2 className="mb-3 text-base font-semibold">Access Requests</h2>
         <ul className="space-y-2 text-sm">
           {requests.map((r) => (

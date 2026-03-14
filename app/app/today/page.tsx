@@ -84,12 +84,6 @@ export default async function TodayPage({
   return (
     <div className="page-shell px-3 pb-4 sm:px-0">
       <SectionTitle title="Today" subtitle={`${plan.title} • Day ${todayDay.dayNumber} • Coach: ${trainerName}`} />
-      {plan.overallNotes && (
-        <div className="surface p-3 text-sm sm:p-4">
-          <p className="mb-1 font-medium">Overall Notes</p>
-          <pre className="whitespace-pre-wrap text-zinc-700">{plan.overallNotes}</pre>
-        </div>
-      )}
       <section className="surface overflow-hidden p-0">
         <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-4 text-white sm:px-5">
           <div className="flex items-start justify-between gap-3">
@@ -135,6 +129,12 @@ export default async function TodayPage({
           <p className="text-xs text-zinc-500">This only updates your current page view.</p>
         </div>
       </section>
+      {plan.overallNotes && (
+        <div className="surface p-3 text-sm sm:p-4">
+          <p className="mb-1 font-medium">Overall Notes</p>
+          <pre className="whitespace-pre-wrap text-zinc-700">{plan.overallNotes}</pre>
+        </div>
+      )}
       <Card title={`Focus: ${todayDay.focus}`}>
         <ul className="space-y-4">
           {todayDay.exercises.map((e, exIdx) => {

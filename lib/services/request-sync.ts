@@ -1,3 +1,4 @@
+import { DEFAULT_AVATAR_ICON_ID } from "@/lib/avatar-icons";
 import { repo } from "@/lib/repo/sheets-repo";
 import { uid } from "@/lib/sheets/base";
 import { normalizeEnabledFlag } from "@/lib/utils/flags";
@@ -48,6 +49,7 @@ export async function syncApprovedRequestsToUsers(): Promise<number> {
           height: "",
           age: "",
           gender: "",
+          avatarIcon: DEFAULT_AVATAR_ICON_ID,
           chest: "",
           waist: "",
           biceps: "",
@@ -81,6 +83,7 @@ export async function syncApprovedRequestsToUsers(): Promise<number> {
       height: "",
       age: "",
       gender: "",
+      avatarIcon: DEFAULT_AVATAR_ICON_ID,
       chest: "",
       waist: "",
       biceps: "",

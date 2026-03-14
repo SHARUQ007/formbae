@@ -7,13 +7,8 @@ import { normalizeTrainingDays } from "@/lib/profile-form-options";
 import { repo } from "@/lib/repo/sheets-repo";
 import { parseLanguages } from "@/lib/services/profile-onboarding";
 
-export default async function ProfilePage({
-  searchParams
-}: {
-  searchParams: Promise<{ updated?: string }>;
-}) {
+export default async function OnboardingPage() {
   const user = await requireUser("user", { allowIncompleteProfile: true });
-  const params = await searchParams;
   const profile = (await repo.readProfiles()).find((p) => p.userId === user.userId);
   const selectedLanguages = parseLanguages(profile?.languagePreferencesJson);
   const trainingDaysValue = normalizeTrainingDays(profile?.trainingDays);
@@ -21,29 +16,29 @@ export default async function ProfilePage({
 
   return (
     <div className="mx-auto w-full max-w-4xl space-y-4 px-3 pb-4 sm:px-0">
-      <SectionTitle title="Profile" subtitle="Add or edit your basic details" />
-      {params.updated === "1" && <p className="alert-success">Profile updated.</p>}
+      <SectionTitle title="Complete Your Profile" subtitle="One-time setup before you start your plan" />
       <form action="/api/trainer/users" method="post" className="surface grid grid-cols-1 gap-4 p-3 sm:p-4 md:grid-cols-2">
         <input type="hidden" name="mode" value="profile" />
         <input type="hidden" name="userId" value={user.userId} />
+        <input type="hidden" name="returnTo" value="/app/today?onboarded=1" />
 
-        <ProfileAvatarPicker selectedAvatar={selectedAvatar} label="Profile Icon" />
+        <ProfileAvatarPicker selectedAvatar={selectedAvatar} label="Choose Your Profile Icon" required />
 
         <div>
           <label>Weight (kg)</label>
-          <input name="weight" defaultValue={profile?.weight} placeholder="e.g. 70" />
+          <input name="weight" defaultValue={profile?.weight} placeholder="e.g. 70" required />
         </div>
         <div>
           <label>Height (cm)</label>
-          <input name="height" defaultValue={profile?.height} placeholder="e.g. 172" />
+          <input name="height" defaultValue={profile?.height} placeholder="e.g. 172" required />
         </div>
         <div>
           <label>Age</label>
-          <input name="age" defaultValue={profile?.age} placeholder="e.g. 26" />
+          <input name="age" defaultValue={profile?.age} placeholder="e.g. 26" required />
         </div>
         <div>
           <label>Gender</label>
-          <select name="gender" defaultValue={profile?.gender || ""} className="pr-10">
+          <select name="gender" defaultValue={profile?.gender || ""} className="pr-10" required>
             <option value="">Select gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -52,11 +47,11 @@ export default async function ProfilePage({
         </div>
         <div>
           <label>Diet Preference</label>
-          <input name="dietPref" defaultValue={profile?.dietPref} placeholder="veg / non-veg / mixed" />
+          <input name="dietPref" defaultValue={profile?.dietPref} placeholder="veg / non-veg / mixed" required />
         </div>
         <div>
           <label>Training Days (/week)</label>
-          <select name="trainingDays" defaultValue={trainingDaysValue} className="pr-10">
+          <select name="trainingDays" defaultValue={trainingDaysValue} className="pr-10" required>
             <option value="">Select days per week</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -67,6 +62,7 @@ export default async function ProfilePage({
             <option value="7">7</option>
           </select>
         </div>
+
         <LanguagePreferencePicker selectedLanguages={selectedLanguages} />
 
         <input type="hidden" name="chest" value={profile?.chest ?? ""} />
@@ -77,7 +73,7 @@ export default async function ProfilePage({
         <input type="hidden" name="photosUrlsJson" value={profile?.photosUrlsJson || "{}"} />
 
         <button className="btn btn-primary w-full md:col-span-2" type="submit">
-          Save Profile
+          Finish Onboarding
         </button>
       </form>
     </div>

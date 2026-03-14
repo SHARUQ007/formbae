@@ -1,3 +1,4 @@
+import { NoWorkoutAssigned } from "@/components/NoWorkoutAssigned";
 import { SectionTitle } from "@/components/SectionTitle";
 import { requireUser } from "@/lib/auth/guard";
 import { getPlanForUser } from "@/lib/services/plans";
@@ -6,7 +7,14 @@ export default async function LogPage() {
   const user = await requireUser("user");
   const plan = await getPlanForUser(user.userId);
 
-  if (!plan || !plan.days.length) return <p>No plan available.</p>;
+  if (!plan || !plan.days.length) {
+    return (
+      <div className="mx-auto w-full max-w-4xl space-y-4 px-3 pb-4 sm:px-0">
+        <SectionTitle title="Log Workout" subtitle="No workout assigned yet" />
+        <NoWorkoutAssigned compact />
+      </div>
+    );
+  }
   const day = plan.days[0];
 
   return (

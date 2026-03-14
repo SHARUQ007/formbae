@@ -2,7 +2,9 @@ import { Card } from "@/components/Card";
 import { DayCompleteToggle } from "@/components/DayCompleteToggle";
 import { ExerciseCompleteToggle } from "@/components/ExerciseCompleteToggle";
 import { ExerciseVideoPlayer } from "@/components/ExerciseVideoPlayer";
+import { NoWorkoutAssigned } from "@/components/NoWorkoutAssigned";
 import { SectionTitle } from "@/components/SectionTitle";
+import { CalendarDays, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth/guard";
 import { repo } from "@/lib/repo/sheets-repo";
@@ -46,7 +48,12 @@ export default async function TodayPage({
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 
   if (!plan || !plan.days.length) {
-    return <p>No active plan yet. Ask your trainer to assign one.</p>;
+    return (
+      <div className="page-shell px-3 pb-4 sm:px-0">
+        <SectionTitle title="Today" subtitle="No workout assigned yet" />
+        <NoWorkoutAssigned />
+      </div>
+    );
   }
 
   const selectedDay = typeof params.day === "string" ? params.day : "";
@@ -83,33 +90,51 @@ export default async function TodayPage({
           <pre className="whitespace-pre-wrap text-zinc-700">{plan.overallNotes}</pre>
         </div>
       )}
-      <div className="surface p-3 text-sm sm:p-4">
-        <p className="mb-2">Need the complete weekly split?</p>
-        <Link href="/app/plan" className="text-emerald-700 underline">
-          View Full Workout Plan
-        </Link>
-      </div>
-      <div className="surface rounded-xl border-zinc-200 bg-zinc-50 px-3 py-3 text-sm text-zinc-700">
-        <p className="mb-2 text-base font-semibold text-zinc-900">
-          Scheduled today: {scheduledDay ? `Day ${scheduledDay.dayNumber} - ${scheduledDay.focus}` : "Rest / no assigned day"}
-        </p>
-        <form method="get" className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <label htmlFor="day" className="text-zinc-500">
-            View day
-          </label>
-          <select id="day" name="day" defaultValue={todayDay.planDayId} className="w-full bg-white text-sm sm:w-auto sm:min-w-[220px]">
-            {plan.days.map((d, idx) => (
-              <option key={`${d.planDayId}-${idx}`} value={d.planDayId}>
-                Day {d.dayNumber} - {d.focus}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="btn btn-muted w-full sm:w-auto">
-            Switch
-          </button>
-        </form>
-        <p className="mt-1 text-xs text-zinc-500">This only changes this page view.</p>
-      </div>
+      <section className="surface overflow-hidden p-0">
+        <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-4 text-white sm:px-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-emerald-100">Weekly Navigation</p>
+              <h3 className="mt-1 text-lg font-semibold">Need the complete weekly split?</h3>
+              <p className="mt-1 text-sm text-emerald-100">Open the full plan to scan all workout days in one place.</p>
+            </div>
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/20">
+              <Sparkles className="h-5 w-5" />
+            </span>
+          </div>
+          <Link href="/app/plan" className="btn mt-3 w-full border border-white/40 bg-white/15 text-white hover:bg-white/25 sm:w-auto">
+            View Full Workout Plan
+          </Link>
+        </div>
+
+        <div className="space-y-3 bg-white px-4 py-4 sm:px-5">
+          <div className="flex items-center gap-2 text-zinc-500">
+            <CalendarDays className="h-4 w-4" />
+            <p className="text-xs uppercase tracking-wide">Today&apos;s Slot</p>
+          </div>
+          <p className="text-lg font-semibold text-zinc-900">
+            {scheduledDay ? `Day ${scheduledDay.dayNumber} - ${scheduledDay.focus}` : "Rest / no assigned day"}
+          </p>
+          <form method="get" className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+            <div>
+              <label htmlFor="day" className="text-zinc-600">
+                Preview another day
+              </label>
+              <select id="day" name="day" defaultValue={todayDay.planDayId} className="w-full bg-white text-sm">
+                {plan.days.map((d, idx) => (
+                  <option key={`${d.planDayId}-${idx}`} value={d.planDayId}>
+                    Day {d.dayNumber} - {d.focus}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button type="submit" className="btn btn-secondary w-full sm:w-auto">
+              Switch Day
+            </button>
+          </form>
+          <p className="text-xs text-zinc-500">This only updates your current page view.</p>
+        </div>
+      </section>
       <Card title={`Focus: ${todayDay.focus}`}>
         <ul className="space-y-4">
           {todayDay.exercises.map((e, exIdx) => {

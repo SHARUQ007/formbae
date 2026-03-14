@@ -1,3 +1,4 @@
+import { NoWorkoutAssigned } from "@/components/NoWorkoutAssigned";
 import { SectionTitle } from "@/components/SectionTitle";
 import { requireUser } from "@/lib/auth/guard";
 import { repo } from "@/lib/repo/sheets-repo";
@@ -17,7 +18,14 @@ function cleanReps(reps: string): string {
 export default async function PlanPage() {
   const user = await requireUser("user");
   const plan = await getPlanForUser(user.userId);
-  if (!plan) return <p>No active plan assigned.</p>;
+  if (!plan) {
+    return (
+      <div className="page-shell px-3 pb-4 sm:px-0">
+        <SectionTitle title="Full Plan" subtitle="No workout assigned yet" />
+        <NoWorkoutAssigned />
+      </div>
+    );
+  }
   const users = await repo.readUsers();
   const trainerName = users.find((u) => u.userId === plan.trainerId)?.name || "Trainer";
 

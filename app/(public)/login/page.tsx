@@ -1,11 +1,16 @@
 import { SectionTitle } from "@/components/SectionTitle";
 import { getSessionUser } from "@/lib/auth/session";
+import { getProfileForUser, isProfileOnboardingComplete } from "@/lib/services/profile-onboarding";
 import { redirect } from "next/navigation";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const session = await getSessionUser();
   if (session) {
-    redirect(session.role === "admin" ? "/admin/dashboard" : session.role === "trainer" ? "/trainer/dashboard" : "/app/today");
+    if (session.role === "user") {
+      const profile = await getProfileForUser(session.userId);
+      redirect(isProfileOnboardingComplete(profile) ? "/app/today" : "/app/onboarding");
+    }
+    redirect(session.role === "admin" ? "/admin/dashboard" : "/trainer/dashboard");
   }
 
   const params = await searchParams;

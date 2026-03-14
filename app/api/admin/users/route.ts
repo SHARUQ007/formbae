@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { DEFAULT_AVATAR_ICON_ID } from "@/lib/avatar-icons";
 import { getSessionUser } from "@/lib/auth/session";
 import { repo } from "@/lib/repo/sheets-repo";
 import { uid, readSheet, overwriteRows } from "@/lib/sheets/base";
@@ -124,6 +125,7 @@ export async function POST(request: NextRequest) {
       height: "",
       age: "",
       gender: "",
+      avatarIcon: DEFAULT_AVATAR_ICON_ID,
       chest: "",
       waist: "",
       biceps: "",

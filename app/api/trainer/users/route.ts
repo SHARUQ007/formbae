@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { DEFAULT_AVATAR_ICON_ID, normalizeAvatarIconId } from "@/lib/avatar-icons";
 import { getSessionUser } from "@/lib/auth/session";
 import { repo } from "@/lib/repo/sheets-repo";
 import { uid } from "@/lib/sheets/base";
@@ -114,6 +115,7 @@ export async function POST(request: NextRequest) {
 
   if (mode === "profile") {
     const userId = String(form.get("userId") ?? "");
+    const returnTo = String(form.get("returnTo") ?? "");
     if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });
 
     if (session.role !== "trainer" && session.role !== "admin" && session.userId !== userId) {
@@ -126,6 +128,7 @@ export async function POST(request: NextRequest) {
       height: String(form.get("height") ?? ""),
       age: String(form.get("age") ?? ""),
       gender: normalizeGender(String(form.get("gender") ?? "")),
+      avatarIcon: normalizeAvatarIconId(String(form.get("avatarIcon") ?? "")),
       chest: String(form.get("chest") ?? ""),
       waist: String(form.get("waist") ?? ""),
       biceps: String(form.get("biceps") ?? ""),
@@ -143,7 +146,9 @@ export async function POST(request: NextRequest) {
         ? `/trainer/users/${userId}`
         : session.role === "admin"
           ? "/admin/dashboard"
-          : "/app/profile?updated=1";
+          : returnTo.startsWith("/app/")
+            ? returnTo
+            : "/app/profile?updated=1";
     return NextResponse.redirect(new URL(redirectTo, request.url));
   }
 
@@ -204,6 +209,7 @@ export async function POST(request: NextRequest) {
         height: "",
         age: "",
         gender: "",
+        avatarIcon: DEFAULT_AVATAR_ICON_ID,
         chest: "",
         waist: "",
         biceps: "",
@@ -291,6 +297,7 @@ export async function POST(request: NextRequest) {
         height: "",
         age: "",
         gender: "",
+        avatarIcon: DEFAULT_AVATAR_ICON_ID,
         chest: "",
         waist: "",
         biceps: "",
@@ -344,6 +351,7 @@ export async function POST(request: NextRequest) {
     height: "",
     age: "",
     gender: "",
+    avatarIcon: DEFAULT_AVATAR_ICON_ID,
     chest: "",
     waist: "",
     biceps: "",

@@ -21,6 +21,7 @@ export const SHEET_HEADERS: Record<string, string[]> = {
     "height",
     "age",
     "gender",
+    "avatarIcon",
     "chest",
     "waist",
     "biceps",

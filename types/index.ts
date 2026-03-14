@@ -16,6 +16,7 @@ export type ProfileRow = {
   height: string;
   age: string;
   gender: string;
+  avatarIcon: string;
   chest: string;
   waist: string;
   biceps: string;

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { DEFAULT_AVATAR_ICON_ID } from "@/lib/avatar-icons";
 import { repo } from "@/lib/repo/sheets-repo";
 import { setSession } from "@/lib/auth/session";
 import { checkLoginRateLimit } from "@/lib/auth/rate-limit";
 import { uid } from "@/lib/sheets/base";
 import { isEnabledFlag, normalizeEnabledFlag } from "@/lib/utils/flags";
 import { isValidMobile, normalizeMobile } from "@/lib/utils/mobile";
+import { isProfileOnboardingComplete } from "@/lib/services/profile-onboarding";
 
 export async function POST(request: NextRequest) {
   const form = await request.formData();
@@ -57,6 +59,7 @@ export async function POST(request: NextRequest) {
           height: "",
           age: "",
           gender: "",
+          avatarIcon: DEFAULT_AVATAR_ICON_ID,
           chest: "",
           waist: "",
           biceps: "",
@@ -82,6 +85,7 @@ export async function POST(request: NextRequest) {
             height: "",
             age: "",
             gender: "",
+            avatarIcon: DEFAULT_AVATAR_ICON_ID,
             chest: "",
             waist: "",
             biceps: "",
@@ -110,7 +114,11 @@ export async function POST(request: NextRequest) {
     trainerId: user.trainerId
   });
 
-  const redirectTo =
+  let redirectTo =
     user.role === "admin" ? "/admin/dashboard" : user.role === "trainer" ? "/trainer/dashboard" : "/app/today";
+  if (user.role === "user") {
+    const profile = (await repo.readProfiles()).find((p) => p.userId === user.userId);
+    redirectTo = isProfileOnboardingComplete(profile) ? "/app/today" : "/app/onboarding";
+  }
   return NextResponse.redirect(new URL(redirectTo, request.url));
 }
